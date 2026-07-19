@@ -1,0 +1,24 @@
+# macOS
+.DS_Store
+
+# Android / Gradle
+.gradle/
+build/
+local.properties
+*.iml
+
+# Node / Web
+node_modules/
+.next/
+dist/
+coverage/
+
+# Environment
+.env
+.env.*
+
+# Firebase
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
