@@ -2,7 +2,7 @@ package com.moazip.feature.dashboard
 
 import androidx.lifecycle.viewModelScope
 import com.moazip.core.domain.usecase.ObserveDashboardSummary
-import com.moazip.core.ui.mvi.MviViewModel
+import com.moazip.core.presentation.mvi.MviViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.Job

@@ -1,4 +1,4 @@
-package com.moazip.core.ui.mvi
+package com.moazip.core.presentation.mvi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

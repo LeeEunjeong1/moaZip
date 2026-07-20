@@ -1,6 +1,5 @@
 package com.moazip.app
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -11,6 +10,7 @@ import com.moazip.feature.assets.AssetsRoute
 import com.moazip.feature.dashboard.DashboardEffect
 import com.moazip.feature.dashboard.DashboardRoute
 import com.moazip.feature.dashboard.DashboardViewModel
+import com.moazip.core.ui.theme.MoaZipTheme
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import androidx.compose.runtime.LaunchedEffect
@@ -24,7 +24,7 @@ private object Route {
 fun MoaZipApp(container: AppContainer) {
     val navController = rememberNavController()
 
-    MaterialTheme {
+    MoaZipTheme {
         Surface {
             NavHost(navController = navController, startDestination = Route.Dashboard) {
                 composable(Route.Dashboard) {

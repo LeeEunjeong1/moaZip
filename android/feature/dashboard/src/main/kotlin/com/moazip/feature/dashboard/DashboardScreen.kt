@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,6 +16,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.moazip.core.ui.component.MoaZipButton
+import com.moazip.core.ui.component.MoaZipCard
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -65,19 +65,20 @@ fun DashboardScreen(
         SummaryCard("투자 손익", state.summary.investmentProfitLoss.asWon())
         SummaryCard("월 저축액", state.summary.monthlySavings.asWon())
 
-        Button(onClick = { onIntent(DashboardIntent.OpenAssets) }) {
-            Text("자산 목록 보기")
-        }
+        MoaZipButton(
+            text = "자산 목록 보기",
+            onClick = { onIntent(DashboardIntent.OpenAssets) },
+        )
     }
 }
 
 @Composable
 private fun SummaryCard(label: String, value: String) {
-    Card(modifier = Modifier.fillMaxWidth()) {
+    MoaZipCard(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(vertical = 2.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(label)

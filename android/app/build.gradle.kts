@@ -34,6 +34,7 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:domain"))
     implementation(project(":core:data"))
+    implementation(project(":core:presentation"))
     implementation(project(":core:ui"))
     implementation(project(":feature:dashboard"))
     implementation(project(":feature:assets"))

@@ -9,11 +9,11 @@ and feature-based multi-module boundaries.
 app
  ├─ feature:dashboard / assets / recurring / import
  ├─ core:data
+ ├─ core:presentation
  └─ core:ui
 
 feature:* ──> core:domain ──> core:model
 core:data ──> core:domain
-core:ui ────> core:model
 ```
 
 - `app`: application entry point, navigation, and dependency wiring.
@@ -21,7 +21,8 @@ core:ui ────> core:model
 - `core:model`: framework-free business models.
 - `core:domain`: repository interfaces and use cases. It does not know data sources.
 - `core:data`: repository implementations and data-source coordination.
-- `core:ui`: shared Compose UI and MVI primitives.
+- `core:presentation`: framework-level MVI contracts and base ViewModel.
+- `core:ui`: Figma-derived theme tokens and shared Compose components.
 
 ## Feature convention
 
