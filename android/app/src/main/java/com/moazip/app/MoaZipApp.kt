@@ -2,6 +2,7 @@ package com.moazip.app
 
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -34,10 +35,13 @@ fun MoaZipApp(
     googleAuthClient: FirebaseGoogleAuthClient,
 ) {
     val navController = rememberNavController()
+    val startDestination = remember(googleAuthClient) {
+        if (googleAuthClient.hasAuthenticatedUser()) Route.InvitePartner else Route.Login
+    }
 
     MoaZipTheme {
         Surface {
-            NavHost(navController = navController, startDestination = Route.Login) {
+            NavHost(navController = navController, startDestination = startDestination) {
                 composable(Route.Login) {
                     val loginViewModel: LoginViewModel = viewModel()
                     LoginRoute(

@@ -21,6 +21,8 @@ class FirebaseGoogleAuthClient(
     private val credentialManager: CredentialManager = CredentialManager.create(activity),
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance(),
 ) {
+    fun hasAuthenticatedUser(): Boolean = firebaseAuth.currentUser != null
+
     suspend fun signIn(): GoogleLoginOutcome = try {
         val googleIdOption = GetSignInWithGoogleOption.Builder(
             activity.getString(R.string.default_web_client_id),
