@@ -1,26 +1,20 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
 }
 
 android {
-    namespace = "com.moazip.core.ui"
+    namespace = "com.moazip.core.firebase"
     compileSdk = 35
 
     defaultConfig {
         minSdk = 26
     }
 
-    buildFeatures {
-        compose = true
-    }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-
 }
 
 kotlin {
@@ -30,7 +24,9 @@ kotlin {
 }
 
 dependencies {
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.material3)
+    implementation(project(":core:model"))
+    implementation(project(":core:domain"))
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.firestore)
+    implementation(libs.kotlinx.coroutines.play.services)
 }

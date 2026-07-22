@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.moazip.core.ui"
+    namespace = "com.moazip.feature.auth"
     compileSdk = 35
 
     defaultConfig {
@@ -30,7 +30,12 @@ kotlin {
 }
 
 dependencies {
+    implementation(project(":core:presentation"))
+    implementation(project(":core:ui"))
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.kotlinx.coroutines.android)
 }

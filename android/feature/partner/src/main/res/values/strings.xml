@@ -1,0 +1,12 @@
+<resources>
+    <string name="invite_partner_title">파트너 초대하기</string>
+    <string name="invite_partner_description">초대 코드를 공유하면 같은 자산 데이터를 함께 볼 수 있어요.</string>
+    <string name="invite_partner_code_label">초대 코드</string>
+    <string name="invite_partner_code_expiry">24시간 동안 사용할 수 있어요</string>
+    <string name="invite_partner_copy">코드 복사하기</string>
+    <string name="invite_partner_copied">복사했어요</string>
+    <string name="invite_partner_later">나중에 하기</string>
+    <string name="invite_partner_join">초대 코드로 참여하기</string>
+    <string name="invite_partner_permission_title">MVP 권한</string>
+    <string name="invite_partner_permission_description">두 사람 모두 자산 추가, 수정, 분기 기록을 할 수 있어요.</string>
+</resources>
