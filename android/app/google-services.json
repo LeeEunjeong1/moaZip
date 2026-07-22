@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "257769226249",
+    "project_id": "moa-zip-ef4b6",
+    "storage_bucket": "moa-zip-ef4b6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:257769226249:android:0b311b949ea6481335f8d8",
+        "android_client_info": {
+          "package_name": "com.moazip.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "257769226249-66frceg5imsk4qlboepqumf4rt3kqrq8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.moazip.app",
+            "certificate_hash": "27c760ffe9533eded2066f261ac8e3680655d2b6"
+          }
+        },
+        {
+          "client_id": "257769226249-evpq26rg5352co28uro69eq0fqe1k751.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjL2DO2v2d6mmaCmHlat4wcW0UBJCE8r0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "257769226249-evpq26rg5352co28uro69eq0fqe1k751.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

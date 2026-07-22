@@ -1,7 +1,6 @@
 package com.moazip.feature.auth
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,15 +22,14 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.res.stringResource
 import com.moazip.core.ui.component.MoaZipButton
 import com.moazip.core.ui.component.MoaZipLogo
-import com.moazip.core.ui.component.MoaZipOutlinedButton
 import com.moazip.core.ui.theme.MoaZipPalette
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun LoginRoute(
     viewModel: LoginViewModel,
-    onGoogleLoginRequested: () -> Unit,
-    onInviteCodeRequested: () -> Unit,
+    onGoogleLoginRequested: suspend () -> GoogleLoginOutcome,
+    onLoginSucceeded: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val state by viewModel.state.collectAsState()
@@ -39,8 +37,10 @@ fun LoginRoute(
     LaunchedEffect(viewModel) {
         viewModel.effect.collectLatest { effect ->
             when (effect) {
-                LoginEffect.RequestGoogleLogin -> onGoogleLoginRequested()
-                LoginEffect.OpenInviteCode -> onInviteCodeRequested()
+                LoginEffect.RequestGoogleLogin -> viewModel.onIntent(
+                    LoginIntent.GoogleLoginCompleted(onGoogleLoginRequested()),
+                )
+                LoginEffect.NavigateToPartnerSetup -> onLoginSucceeded()
             }
         }
     }
@@ -87,20 +87,23 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(23.dp),
-        ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
             MoaZipButton(
                 text = stringResource(R.string.login_google_button),
                 onClick = { onIntent(LoginIntent.GoogleLoginClicked) },
                 enabled = !state.isLoading,
             )
-            MoaZipOutlinedButton(
-                text = stringResource(R.string.login_invite_button),
-                onClick = { onIntent(LoginIntent.InviteCodeClicked) },
-                enabled = !state.isLoading,
-            )
+            state.error?.let { error ->
+                Text(
+                    text = when (error) {
+                        LoginError.GoogleLoginFailed -> stringResource(R.string.login_google_error)
+                    },
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(173.dp))
