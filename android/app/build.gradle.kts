@@ -37,6 +37,7 @@ dependencies {
     implementation(project(":core:presentation"))
     implementation(project(":core:ui"))
     implementation(project(":feature:dashboard"))
+    implementation(project(":feature:auth"))
     implementation(project(":feature:assets"))
     implementation(project(":feature:recurring"))
     implementation(project(":feature:import"))

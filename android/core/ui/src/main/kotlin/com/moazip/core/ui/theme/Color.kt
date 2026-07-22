@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.Color
 object MoaZipPalette {
     val Yellow500 = Color(0xFFFFC83D)
     val Yellow50 = Color(0xFFFFF8E3)
+    val Cream50 = Color(0xFFFFFDF8)
 
     val Gray950 = Color(0xFF191814)
     val Gray900 = Color(0xFF222222)
