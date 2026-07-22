@@ -17,6 +17,12 @@ import com.moazip.feature.dashboard.DashboardViewModel
 import com.moazip.feature.partner.InvitePartnerEffect
 import com.moazip.feature.partner.InvitePartnerRoute
 import com.moazip.feature.partner.InvitePartnerViewModel
+import com.moazip.feature.partner.CreateHomeEffect
+import com.moazip.feature.partner.CreateHomeRoute
+import com.moazip.feature.partner.CreateHomeViewModel
+import com.moazip.feature.partner.JoinWithCodeEffect
+import com.moazip.feature.partner.JoinWithCodeRoute
+import com.moazip.feature.partner.JoinWithCodeViewModel
 import com.moazip.core.ui.theme.MoaZipTheme
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -24,8 +30,10 @@ import androidx.compose.runtime.LaunchedEffect
 
 private object Route {
     const val Login = "login"
+    const val CreateHome = "create_home"
     const val Dashboard = "dashboard"
     const val InvitePartner = "invite_partner"
+    const val JoinWithCode = "join_with_code"
     const val Assets = "assets"
 }
 
@@ -36,7 +44,7 @@ fun MoaZipApp(
 ) {
     val navController = rememberNavController()
     val startDestination = remember(googleAuthClient) {
-        if (googleAuthClient.hasAuthenticatedUser()) Route.InvitePartner else Route.Login
+        if (googleAuthClient.hasAuthenticatedUser()) Route.CreateHome else Route.Login
     }
 
     MoaZipTheme {
@@ -48,11 +56,29 @@ fun MoaZipApp(
                         viewModel = loginViewModel,
                         onGoogleLoginRequested = googleAuthClient::signIn,
                         onLoginSucceeded = {
-                            navController.navigate(Route.InvitePartner) {
+                            navController.navigate(Route.CreateHome) {
                                 popUpTo(Route.Login) { inclusive = true }
                             }
                         },
                     )
+                }
+                composable(Route.CreateHome) {
+                    val createHomeViewModel: CreateHomeViewModel = viewModel()
+                    LaunchedEffect(createHomeViewModel) {
+                        createHomeViewModel.effect
+                            .onEach { effect ->
+                                when (effect) {
+                                    CreateHomeEffect.NavigateToInvitePartner -> {
+                                        navController.navigate(Route.InvitePartner)
+                                    }
+                                    CreateHomeEffect.NavigateToJoinWithCode -> {
+                                        navController.navigate(Route.JoinWithCode)
+                                    }
+                                }
+                            }
+                            .launchIn(this)
+                    }
+                    CreateHomeRoute(viewModel = createHomeViewModel)
                 }
                 composable(Route.InvitePartner) {
                     val invitePartnerViewModel: InvitePartnerViewModel = viewModel()
@@ -65,12 +91,32 @@ fun MoaZipApp(
                                             popUpTo(Route.InvitePartner) { inclusive = true }
                                         }
                                     }
-                                    InvitePartnerEffect.OpenJoinWithCode -> Unit
+                                    InvitePartnerEffect.OpenJoinWithCode -> {
+                                        navController.navigate(Route.JoinWithCode)
+                                    }
                                 }
                             }
                             .launchIn(this)
                     }
                     InvitePartnerRoute(viewModel = invitePartnerViewModel)
+                }
+                composable(Route.JoinWithCode) {
+                    val joinWithCodeViewModel: JoinWithCodeViewModel = viewModel()
+                    LaunchedEffect(joinWithCodeViewModel) {
+                        joinWithCodeViewModel.effect
+                            .onEach { effect ->
+                                if (effect is JoinWithCodeEffect.NavigateToDashboard) {
+                                    navController.navigate(Route.Dashboard) {
+                                        popUpTo(Route.CreateHome) { inclusive = true }
+                                    }
+                                }
+                            }
+                            .launchIn(this)
+                    }
+                    JoinWithCodeRoute(
+                        viewModel = joinWithCodeViewModel,
+                        onBack = navController::popBackStack,
+                    )
                 }
                 composable(Route.Dashboard) {
                     val dashboardViewModel: DashboardViewModel = viewModel(
