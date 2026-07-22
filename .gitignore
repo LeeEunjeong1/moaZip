@@ -6,6 +6,8 @@
 build/
 local.properties
 *.iml
+.idea/
+.kotlin/
 
 # Node / Web
 node_modules/
@@ -21,4 +23,3 @@ coverage/
 firebase-debug.log
 firestore-debug.log
 ui-debug.log
-
