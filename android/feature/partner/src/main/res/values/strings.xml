@@ -5,6 +5,7 @@
     <string name="create_home_name_label">우리 집 이름</string>
     <string name="create_home_name_placeholder">예: 행복한 우리 집</string>
     <string name="create_home_button">우리 집 만들기</string>
+    <string name="create_home_creating">만드는 중...</string>
     <string name="invite_partner_title">파트너 초대하기</string>
     <string name="invite_partner_description">초대 코드를 공유하면 같은 자산 데이터를 함께 볼 수 있어요.</string>
     <string name="invite_partner_code_label">초대 코드</string>

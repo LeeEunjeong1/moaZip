@@ -11,7 +11,7 @@ sealed interface InvitePartnerIntent : UiIntent {
 }
 
 data class InvitePartnerState(
-    val inviteCode: String = "MZ-4821",
+    val inviteCode: String,
     val isCodeCopied: Boolean = false,
 ) : UiState
 

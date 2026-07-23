@@ -4,9 +4,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.FirebaseAuth
 import com.moazip.feature.assets.AssetsRoute
 import com.moazip.feature.auth.LoginRoute
 import com.moazip.feature.auth.LoginViewModel
@@ -33,8 +36,11 @@ private object Route {
     const val CreateHome = "create_home"
     const val Dashboard = "dashboard"
     const val InvitePartner = "invite_partner"
+    const val InviteCodeArgument = "inviteCode"
     const val JoinWithCode = "join_with_code"
     const val Assets = "assets"
+
+    fun invitePartner(inviteCode: String) = "$InvitePartner/$inviteCode"
 }
 
 @Composable
@@ -63,13 +69,20 @@ fun MoaZipApp(
                     )
                 }
                 composable(Route.CreateHome) {
-                    val createHomeViewModel: CreateHomeViewModel = viewModel()
+                    val createHomeViewModel: CreateHomeViewModel = viewModel(
+                        factory = viewModelFactory {
+                            CreateHomeViewModel(
+                                createHouseholdUseCase = container.createHouseholdUseCase,
+                                currentUserIdProvider = { FirebaseAuth.getInstance().currentUser?.uid },
+                            )
+                        },
+                    )
                     LaunchedEffect(createHomeViewModel) {
                         createHomeViewModel.effect
                             .onEach { effect ->
                                 when (effect) {
-                                    CreateHomeEffect.NavigateToInvitePartner -> {
-                                        navController.navigate(Route.InvitePartner)
+                                    is CreateHomeEffect.NavigateToInvitePartner -> {
+                                        navController.navigate(Route.invitePartner(effect.inviteCode))
                                     }
                                     CreateHomeEffect.NavigateToJoinWithCode -> {
                                         navController.navigate(Route.JoinWithCode)
@@ -80,15 +93,23 @@ fun MoaZipApp(
                     }
                     CreateHomeRoute(viewModel = createHomeViewModel)
                 }
-                composable(Route.InvitePartner) {
-                    val invitePartnerViewModel: InvitePartnerViewModel = viewModel()
+                composable(
+                    route = "${Route.InvitePartner}/{${Route.InviteCodeArgument}}",
+                    arguments = listOf(navArgument(Route.InviteCodeArgument) { type = NavType.StringType }),
+                ) { backStackEntry ->
+                    val inviteCode = backStackEntry.arguments?.getString(Route.InviteCodeArgument).orEmpty()
+                    val invitePartnerViewModel: InvitePartnerViewModel = viewModel(
+                        factory = viewModelFactory {
+                            InvitePartnerViewModel(inviteCode = inviteCode)
+                        },
+                    )
                     LaunchedEffect(invitePartnerViewModel) {
                         invitePartnerViewModel.effect
                             .onEach { effect ->
                                 when (effect) {
                                     InvitePartnerEffect.NavigateToDashboard -> {
                                         navController.navigate(Route.Dashboard) {
-                                            popUpTo(Route.InvitePartner) { inclusive = true }
+                                            popUpTo(Route.CreateHome) { inclusive = true }
                                         }
                                     }
                                     InvitePartnerEffect.OpenJoinWithCode -> {

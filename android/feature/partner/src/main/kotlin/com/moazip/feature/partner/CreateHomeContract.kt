@@ -12,11 +12,13 @@ sealed interface CreateHomeIntent : UiIntent {
 
 data class CreateHomeState(
     val homeName: String = "",
+    val isCreating: Boolean = false,
+    val errorMessage: String? = null,
 ) : UiState {
-    val canCreate: Boolean get() = homeName.isNotBlank()
+    val canCreate: Boolean get() = homeName.isNotBlank() && !isCreating
 }
 
 sealed interface CreateHomeEffect : UiEffect {
-    data object NavigateToInvitePartner : CreateHomeEffect
+    data class NavigateToInvitePartner(val inviteCode: String) : CreateHomeEffect
     data object NavigateToJoinWithCode : CreateHomeEffect
 }

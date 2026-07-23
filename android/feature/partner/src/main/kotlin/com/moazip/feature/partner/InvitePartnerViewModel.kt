@@ -2,8 +2,10 @@ package com.moazip.feature.partner
 
 import com.moazip.core.presentation.mvi.MviViewModel
 
-class InvitePartnerViewModel : MviViewModel<InvitePartnerIntent, InvitePartnerState, InvitePartnerEffect>(
-    InvitePartnerState(),
+class InvitePartnerViewModel(
+    inviteCode: String,
+) : MviViewModel<InvitePartnerIntent, InvitePartnerState, InvitePartnerEffect>(
+    InvitePartnerState(inviteCode = inviteCode),
 ) {
     override fun onIntent(intent: InvitePartnerIntent) {
         when (intent) {

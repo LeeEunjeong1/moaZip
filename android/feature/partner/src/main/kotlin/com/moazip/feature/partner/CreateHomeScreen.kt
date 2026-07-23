@@ -64,9 +64,19 @@ fun CreateHomeScreen(
             onValueChange = { onIntent(CreateHomeIntent.HomeNameChanged(it)) },
             placeholder = stringResource(R.string.create_home_name_placeholder),
         )
+        if (state.errorMessage != null) {
+            Spacer(Modifier.height(10.dp))
+            Text(
+                text = state.errorMessage,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
         Spacer(Modifier.weight(1f))
         MoaZipButton(
-            text = stringResource(R.string.create_home_button),
+            text = stringResource(
+                if (state.isCreating) R.string.create_home_creating else R.string.create_home_button,
+            ),
             onClick = { onIntent(CreateHomeIntent.CreateClicked) },
             enabled = state.canCreate,
         )
