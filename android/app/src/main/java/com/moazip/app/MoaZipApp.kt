@@ -1,8 +1,15 @@
 package com.moazip.app
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -26,13 +33,14 @@ import com.moazip.feature.partner.CreateHomeViewModel
 import com.moazip.feature.partner.JoinWithCodeEffect
 import com.moazip.feature.partner.JoinWithCodeRoute
 import com.moazip.feature.partner.JoinWithCodeViewModel
+import com.moazip.core.ui.theme.MoaZipPalette
 import com.moazip.core.ui.theme.MoaZipTheme
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import androidx.compose.runtime.LaunchedEffect
 
 private object Route {
     const val Login = "login"
+    const val HouseholdGate = "household_gate"
     const val CreateHome = "create_home"
     const val Dashboard = "dashboard"
     const val InvitePartner = "invite_partner"
@@ -50,7 +58,7 @@ fun MoaZipApp(
 ) {
     val navController = rememberNavController()
     val startDestination = remember(googleAuthClient) {
-        if (googleAuthClient.hasAuthenticatedUser()) Route.CreateHome else Route.Login
+        if (googleAuthClient.hasAuthenticatedUser()) Route.HouseholdGate else Route.Login
     }
 
     MoaZipTheme {
@@ -62,11 +70,28 @@ fun MoaZipApp(
                         viewModel = loginViewModel,
                         onGoogleLoginRequested = googleAuthClient::signIn,
                         onLoginSucceeded = {
-                            navController.navigate(Route.CreateHome) {
+                            navController.navigate(Route.HouseholdGate) {
                                 popUpTo(Route.Login) { inclusive = true }
                             }
                         },
                     )
+                }
+                composable(Route.HouseholdGate) {
+                    LaunchedEffect(Unit) {
+                        val userId = FirebaseAuth.getInstance().currentUser?.uid
+                        val nextRoute = if (userId != null && runCatching {
+                                container.hasJoinedHouseholdUseCase(userId)
+                            }.getOrDefault(false)
+                        ) {
+                            Route.Dashboard
+                        } else {
+                            Route.CreateHome
+                        }
+                        navController.navigate(nextRoute) {
+                            popUpTo(Route.HouseholdGate) { inclusive = true }
+                        }
+                    }
+                    HouseholdGateScreen()
                 }
                 composable(Route.CreateHome) {
                     val createHomeViewModel: CreateHomeViewModel = viewModel(
@@ -122,7 +147,14 @@ fun MoaZipApp(
                     InvitePartnerRoute(viewModel = invitePartnerViewModel)
                 }
                 composable(Route.JoinWithCode) {
-                    val joinWithCodeViewModel: JoinWithCodeViewModel = viewModel()
+                    val joinWithCodeViewModel: JoinWithCodeViewModel = viewModel(
+                        factory = viewModelFactory {
+                            JoinWithCodeViewModel(
+                                joinHouseholdWithInviteCodeUseCase = container.joinHouseholdWithInviteCodeUseCase,
+                                currentUserIdProvider = { FirebaseAuth.getInstance().currentUser?.uid },
+                            )
+                        },
+                    )
                     LaunchedEffect(joinWithCodeViewModel) {
                         joinWithCodeViewModel.effect
                             .onEach { effect ->
@@ -159,5 +191,17 @@ fun MoaZipApp(
                 composable(Route.Assets) { AssetsRoute() }
             }
         }
+    }
+}
+
+@Composable
+private fun HouseholdGateScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MoaZipPalette.Cream50),
+        contentAlignment = Alignment.Center,
+    ) {
+        CircularProgressIndicator()
     }
 }

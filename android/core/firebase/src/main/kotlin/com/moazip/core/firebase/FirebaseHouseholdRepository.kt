@@ -3,9 +3,12 @@ package com.moazip.core.firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.moazip.core.domain.repository.HouseholdRepository
 import com.moazip.core.model.HouseholdCreationResult
+import com.moazip.core.model.JoinHouseholdResult
 import kotlinx.coroutines.tasks.await
+import java.util.Locale
 import kotlin.random.Random
 
 class FirebaseHouseholdRepository(
@@ -62,6 +65,78 @@ class FirebaseHouseholdRepository(
         )
     }
 
+    override suspend fun joinHouseholdWithInviteCode(
+        userId: String,
+        inviteCode: String,
+        replaceExistingHousehold: Boolean,
+    ): JoinHouseholdResult {
+        val normalizedInviteCode = inviteCode.trim().uppercase(Locale.ROOT)
+        val inviteCodeDocument = firestore.collection(INVITE_CODES_COLLECTION).document(normalizedInviteCode)
+        val inviteCodeSnapshot = inviteCodeDocument.get().await()
+        if (!inviteCodeSnapshot.exists()) {
+            throw NoSuchElementException("Invite code does not exist.")
+        }
+
+        val expiresAt = inviteCodeSnapshot.getTimestamp(EXPIRES_AT_FIELD)
+        if (expiresAt != null && expiresAt.seconds < Timestamp.now().seconds) {
+            throw IllegalStateException("Invite code has expired.")
+        }
+
+        val householdId = inviteCodeSnapshot.getString(HOUSEHOLD_ID_FIELD)
+            ?: throw IllegalStateException("Invite code is missing household id.")
+        val existingMemberSnapshots = firestore
+            .collectionGroup(MEMBERS_COLLECTION)
+            .whereEqualTo(ID_FIELD, userId)
+            .get()
+            .await()
+            .documents
+        val existingHouseholdIds = existingMemberSnapshots.mapNotNull { it.getString(HOUSEHOLD_ID_FIELD) }
+
+        if (householdId in existingHouseholdIds) {
+            return JoinHouseholdResult.AlreadyMemberOfHousehold
+        }
+        if (existingHouseholdIds.isNotEmpty() && !replaceExistingHousehold) {
+            return JoinHouseholdResult.RequiresHouseholdSwitch
+        }
+
+        firestore.runTransaction { transaction ->
+            val memberDocument = firestore
+                .collection(HOUSEHOLDS_COLLECTION)
+                .document(householdId)
+                .collection(MEMBERS_COLLECTION)
+                .document(userId)
+
+            existingMemberSnapshots.forEach { memberSnapshot ->
+                transaction.delete(memberSnapshot.reference)
+            }
+            transaction.set(
+                memberDocument,
+                mapOf(
+                    ID_FIELD to userId,
+                    HOUSEHOLD_ID_FIELD to householdId,
+                    ROLE_FIELD to MEMBER_ROLE,
+                    JOINED_WITH_INVITE_CODE_FIELD to normalizedInviteCode,
+                    CREATED_AT_FIELD to FieldValue.serverTimestamp(),
+                    UPDATED_AT_FIELD to FieldValue.serverTimestamp(),
+                ),
+                SetOptions.merge(),
+            )
+        }.await()
+
+        return JoinHouseholdResult.Joined
+    }
+
+    override suspend fun hasJoinedHousehold(userId: String): Boolean {
+        return firestore
+            .collectionGroup(MEMBERS_COLLECTION)
+            .whereEqualTo(ID_FIELD, userId)
+            .limit(1)
+            .get()
+            .await()
+            .documents
+            .isNotEmpty()
+    }
+
     private fun generateInviteCode(): String {
         val suffix = (1..INVITE_CODE_SUFFIX_LENGTH)
             .map { INVITE_CODE_CHARS.random(Random.Default) }
@@ -79,12 +154,14 @@ class FirebaseHouseholdRepository(
         const val INVITE_CODE_FIELD = "inviteCode"
         const val HOUSEHOLD_ID_FIELD = "householdId"
         const val ROLE_FIELD = "role"
+        const val JOINED_WITH_INVITE_CODE_FIELD = "joinedWithInviteCode"
         const val CODE_FIELD = "code"
         const val CREATED_BY_FIELD = "createdBy"
         const val EXPIRES_AT_FIELD = "expiresAt"
         const val CREATED_AT_FIELD = "createdAt"
         const val UPDATED_AT_FIELD = "updatedAt"
         const val OWNER_ROLE = "owner"
+        const val MEMBER_ROLE = "member"
         const val INVITE_CODE_PREFIX = "MZ"
         const val INVITE_CODE_SUFFIX_LENGTH = 4
         const val INVITE_TTL_SECONDS = 24 * 60 * 60

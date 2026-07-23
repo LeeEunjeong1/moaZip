@@ -17,7 +17,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -38,6 +40,8 @@ fun InvitePartnerScreen(
     onIntent: (InvitePartnerIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val clipboardManager = LocalClipboardManager.current
+
     Column(
         modifier = modifier.fillMaxSize().background(MoaZipPalette.Cream50).padding(horizontal = 24.dp),
     ) {
@@ -66,13 +70,23 @@ fun InvitePartnerScreen(
         Spacer(Modifier.height(16.dp))
         MoaZipButton(
             text = stringResource(if (state.isCodeCopied) R.string.invite_partner_copied else R.string.invite_partner_copy),
-            onClick = { onIntent(InvitePartnerIntent.CopyCodeClicked) },
+            onClick = {
+                clipboardManager.setText(AnnotatedString(state.inviteCode))
+                onIntent(InvitePartnerIntent.CopyCodeClicked)
+            },
         )
         Spacer(Modifier.height(16.dp))
-        MoaZipOutlinedButton(
-            text = stringResource(R.string.invite_partner_later),
-            onClick = { onIntent(InvitePartnerIntent.LaterClicked) },
-        )
+        if (state.isCodeCopied) {
+            MoaZipButton(
+                text = stringResource(R.string.invite_partner_go_dashboard),
+                onClick = { onIntent(InvitePartnerIntent.LaterClicked) },
+            )
+        } else {
+            MoaZipOutlinedButton(
+                text = stringResource(R.string.invite_partner_later),
+                onClick = { onIntent(InvitePartnerIntent.LaterClicked) },
+            )
+        }
         Spacer(Modifier.height(12.dp))
         MoaZipOutlinedButton(
             text = stringResource(R.string.invite_partner_join),

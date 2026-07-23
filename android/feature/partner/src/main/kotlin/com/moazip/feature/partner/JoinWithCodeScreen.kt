@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.moazip.core.ui.component.MoaZipButton
+import com.moazip.core.ui.component.MoaZipOutlinedButton
 import com.moazip.core.ui.component.MoaZipTextField
 import com.moazip.core.ui.theme.MoaZipPalette
 
@@ -83,12 +84,30 @@ fun JoinWithCodeScreen(
             color = MoaZipPalette.Gray500,
             style = MaterialTheme.typography.bodySmall,
         )
+        if (state.errorMessage != null) {
+            Spacer(Modifier.height(10.dp))
+            Text(
+                text = state.errorMessage,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
         Spacer(Modifier.weight(1f))
         MoaZipButton(
-            text = stringResource(R.string.join_code_button),
+            text = stringResource(
+                if (state.isJoining) R.string.join_code_joining else R.string.join_code_button,
+            ),
             onClick = { onIntent(JoinWithCodeIntent.JoinClicked) },
             enabled = state.canJoin,
         )
+        if (state.requiresHouseholdSwitch) {
+            Spacer(Modifier.height(12.dp))
+            MoaZipOutlinedButton(
+                text = stringResource(R.string.join_code_switch_household),
+                onClick = { onIntent(JoinWithCodeIntent.SwitchHouseholdClicked) },
+                enabled = state.canSwitchHousehold,
+            )
+        }
         Spacer(Modifier.height(48.dp))
     }
 }
