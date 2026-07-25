@@ -1,5 +1,6 @@
 package com.moazip.feature.auth
 
+import com.moazip.feature.auth.contract.*
 import com.moazip.core.presentation.mvi.MviViewModel
 
 class LoginViewModel : MviViewModel<LoginIntent, LoginState, LoginEffect>(LoginState()) {

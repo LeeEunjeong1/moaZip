@@ -58,6 +58,7 @@ class FirebaseHouseholdRepository(
             )
             .commit()
             .await()
+        saveHouseholdId(ownerUserId, householdDocument.id)
 
         return HouseholdCreationResult(
             householdId = householdDocument.id,
@@ -122,19 +123,160 @@ class FirebaseHouseholdRepository(
                 SetOptions.merge(),
             )
         }.await()
+        saveHouseholdId(userId, householdId)
 
         return JoinHouseholdResult.Joined
     }
 
-    override suspend fun hasJoinedHousehold(userId: String): Boolean {
+    override suspend fun reissueInviteCode(
+        ownerUserId: String,
+        currentInviteCode: String,
+    ): String {
+        val normalizedCurrentCode = currentInviteCode.trim().uppercase(Locale.ROOT)
+        repeat(MAX_INVITE_CODE_GENERATION_ATTEMPTS) {
+            val newInviteCode = generateInviteCode()
+            val currentInviteDocument = firestore
+                .collection(INVITE_CODES_COLLECTION)
+                .document(normalizedCurrentCode)
+            val newInviteDocument = firestore
+                .collection(INVITE_CODES_COLLECTION)
+                .document(newInviteCode)
+            val expiresAt = Timestamp(
+                (System.currentTimeMillis() / MILLIS_PER_SECOND) + INVITE_TTL_SECONDS,
+                0,
+            )
+
+            val result = runCatching {
+                firestore.runTransaction { transaction ->
+                    val currentInviteSnapshot = transaction.get(currentInviteDocument)
+                    check(currentInviteSnapshot.exists()) { "Current invite code does not exist." }
+                    check(currentInviteSnapshot.getString(CREATED_BY_FIELD) == ownerUserId) {
+                        "Only the household owner can reissue its invite code."
+                    }
+                    val householdId = checkNotNull(
+                        currentInviteSnapshot.getString(HOUSEHOLD_ID_FIELD),
+                    ) { "Invite code is missing household id." }
+                    val householdDocument = firestore
+                        .collection(HOUSEHOLDS_COLLECTION)
+                        .document(householdId)
+                    val householdSnapshot = transaction.get(householdDocument)
+                    check(householdSnapshot.getString(OWNER_ID_FIELD) == ownerUserId) {
+                        "Only the household owner can reissue its invite code."
+                    }
+                    check(!transaction.get(newInviteDocument).exists()) {
+                        INVITE_CODE_COLLISION_MESSAGE
+                    }
+
+                    transaction.update(
+                        householdDocument,
+                        mapOf(
+                            INVITE_CODE_FIELD to newInviteCode,
+                            UPDATED_AT_FIELD to FieldValue.serverTimestamp(),
+                        ),
+                    )
+                    transaction.set(
+                        newInviteDocument,
+                        mapOf(
+                            CODE_FIELD to newInviteCode,
+                            HOUSEHOLD_ID_FIELD to householdId,
+                            CREATED_BY_FIELD to ownerUserId,
+                            EXPIRES_AT_FIELD to expiresAt,
+                            CREATED_AT_FIELD to FieldValue.serverTimestamp(),
+                        ),
+                    )
+                    newInviteCode
+                }.await()
+            }
+            result.getOrNull()?.let { return it }
+            val error = result.exceptionOrNull()
+            if (error?.message != INVITE_CODE_COLLISION_MESSAGE) {
+                throw checkNotNull(error)
+            }
+        }
+        error("Failed to generate a unique invite code.")
+    }
+
+    override suspend fun getLatestInviteCode(ownerUserId: String): String? {
         return firestore
+            .collection(INVITE_CODES_COLLECTION)
+            .whereEqualTo(CREATED_BY_FIELD, ownerUserId)
+            .get()
+            .await()
+            .documents
+            .maxByOrNull { document ->
+                document.getTimestamp(EXPIRES_AT_FIELD)?.seconds ?: Long.MIN_VALUE
+            }
+            ?.getString(CODE_FIELD)
+    }
+
+    override suspend fun hasJoinedHousehold(userId: String): Boolean {
+        val userDocument = firestore.collection(USERS_COLLECTION).document(userId)
+        val savedHouseholdId = userDocument.get().await().getString(HOUSEHOLD_ID_FIELD)
+        if (!savedHouseholdId.isNullOrBlank()) {
+            return true
+        }
+
+        val ownedHouseholdId = runCatching {
+            firestore
+                .collection(HOUSEHOLDS_COLLECTION)
+                .whereEqualTo(OWNER_ID_FIELD, userId)
+                .limit(1)
+                .get()
+                .await()
+                .documents
+                .firstOrNull()
+                ?.id
+        }.getOrNull()
+        if (ownedHouseholdId != null) {
+            saveHouseholdId(userId, ownedHouseholdId)
+            return true
+        }
+
+        val createdHouseholdId = firestore
+            .collection(INVITE_CODES_COLLECTION)
+            .whereEqualTo(CREATED_BY_FIELD, userId)
+            .limit(1)
+            .get()
+            .await()
+            .documents
+            .firstOrNull()
+            ?.getString(HOUSEHOLD_ID_FIELD)
+        if (!createdHouseholdId.isNullOrBlank()) {
+            saveHouseholdId(userId, createdHouseholdId)
+            return true
+        }
+
+        val existingMembership = firestore
             .collectionGroup(MEMBERS_COLLECTION)
             .whereEqualTo(ID_FIELD, userId)
             .limit(1)
             .get()
             .await()
             .documents
-            .isNotEmpty()
+            .firstOrNull()
+            ?: return false
+        val householdId = existingMembership.getString(HOUSEHOLD_ID_FIELD)
+            ?: existingMembership.reference.parent.parent?.id
+            ?: return false
+
+        saveHouseholdId(userId, householdId)
+        return true
+    }
+
+    /**
+     * Membership documents remain the source of truth. This denormalized reference only speeds up
+     * app startup, so a rules deployment delay must not make household creation or restoration fail.
+     */
+    private suspend fun saveHouseholdId(userId: String, householdId: String) {
+        runCatching {
+            firestore.collection(USERS_COLLECTION).document(userId).set(
+                mapOf(
+                    HOUSEHOLD_ID_FIELD to householdId,
+                    UPDATED_AT_FIELD to FieldValue.serverTimestamp(),
+                ),
+                SetOptions.merge(),
+            ).await()
+        }
     }
 
     private fun generateInviteCode(): String {
@@ -146,6 +288,7 @@ class FirebaseHouseholdRepository(
 
     private companion object {
         const val HOUSEHOLDS_COLLECTION = "households"
+        const val USERS_COLLECTION = "users"
         const val MEMBERS_COLLECTION = "members"
         const val INVITE_CODES_COLLECTION = "inviteCodes"
         const val ID_FIELD = "id"
@@ -164,6 +307,8 @@ class FirebaseHouseholdRepository(
         const val MEMBER_ROLE = "member"
         const val INVITE_CODE_PREFIX = "MZ"
         const val INVITE_CODE_SUFFIX_LENGTH = 4
+        const val MAX_INVITE_CODE_GENERATION_ATTEMPTS = 5
+        const val INVITE_CODE_COLLISION_MESSAGE = "Invite code collision."
         const val INVITE_TTL_SECONDS = 24 * 60 * 60
         const val MILLIS_PER_SECOND = 1_000
         const val INVITE_CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"

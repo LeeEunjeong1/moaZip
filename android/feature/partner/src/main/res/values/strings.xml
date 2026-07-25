@@ -12,6 +12,9 @@
     <string name="invite_partner_code_expiry">24시간 동안 사용할 수 있어요</string>
     <string name="invite_partner_copy">코드 복사하기</string>
     <string name="invite_partner_copied">복사했어요</string>
+    <string name="invite_partner_reissue">새 코드 발급하기</string>
+    <string name="invite_partner_reissuing">새 코드 발급 중...</string>
+    <string name="invite_partner_reissue_error">새 초대 코드를 발급하지 못했어요. 잠시 후 다시 시도해 주세요.</string>
     <string name="invite_partner_later">나중에 하기</string>
     <string name="invite_partner_go_dashboard">대시보드로 이동</string>
     <string name="invite_partner_join">초대 코드로 참여하기</string>

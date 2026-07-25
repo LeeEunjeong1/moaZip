@@ -1,5 +1,6 @@
 package com.moazip.app
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,18 +22,18 @@ import com.moazip.feature.assets.AssetsRoute
 import com.moazip.feature.auth.LoginRoute
 import com.moazip.feature.auth.LoginViewModel
 import com.moazip.app.auth.FirebaseGoogleAuthClient
-import com.moazip.feature.dashboard.DashboardEffect
+import com.moazip.feature.dashboard.contract.DashboardEffect
 import com.moazip.feature.dashboard.DashboardRoute
 import com.moazip.feature.dashboard.DashboardViewModel
-import com.moazip.feature.partner.InvitePartnerEffect
-import com.moazip.feature.partner.InvitePartnerRoute
-import com.moazip.feature.partner.InvitePartnerViewModel
-import com.moazip.feature.partner.CreateHomeEffect
-import com.moazip.feature.partner.CreateHomeRoute
-import com.moazip.feature.partner.CreateHomeViewModel
-import com.moazip.feature.partner.JoinWithCodeEffect
-import com.moazip.feature.partner.JoinWithCodeRoute
-import com.moazip.feature.partner.JoinWithCodeViewModel
+import com.moazip.feature.partner.createhome.CreateHomeRoute
+import com.moazip.feature.partner.createhome.CreateHomeViewModel
+import com.moazip.feature.partner.createhome.contract.CreateHomeEffect
+import com.moazip.feature.partner.invitepartner.InvitePartnerRoute
+import com.moazip.feature.partner.invitepartner.InvitePartnerViewModel
+import com.moazip.feature.partner.invitepartner.contract.InvitePartnerEffect
+import com.moazip.feature.partner.joinwithcode.JoinWithCodeRoute
+import com.moazip.feature.partner.joinwithcode.JoinWithCodeViewModel
+import com.moazip.feature.partner.joinwithcode.contract.JoinWithCodeEffect
 import com.moazip.core.ui.theme.MoaZipPalette
 import com.moazip.core.ui.theme.MoaZipTheme
 import kotlinx.coroutines.flow.launchIn
@@ -79,10 +80,12 @@ fun MoaZipApp(
                 composable(Route.HouseholdGate) {
                     LaunchedEffect(Unit) {
                         val userId = FirebaseAuth.getInstance().currentUser?.uid
-                        val nextRoute = if (userId != null && runCatching {
-                                container.hasJoinedHouseholdUseCase(userId)
-                            }.getOrDefault(false)
-                        ) {
+                        val hasJoinedHousehold = userId != null && runCatching {
+                            container.hasJoinedHouseholdUseCase(userId)
+                        }.onFailure { exception ->
+                            Log.e("HouseholdGate", "Failed to restore household membership", exception)
+                        }.getOrDefault(false)
+                        val nextRoute = if (hasJoinedHousehold) {
                             Route.Dashboard
                         } else {
                             Route.CreateHome
@@ -125,7 +128,11 @@ fun MoaZipApp(
                     val inviteCode = backStackEntry.arguments?.getString(Route.InviteCodeArgument).orEmpty()
                     val invitePartnerViewModel: InvitePartnerViewModel = viewModel(
                         factory = viewModelFactory {
-                            InvitePartnerViewModel(inviteCode = inviteCode)
+                            InvitePartnerViewModel(
+                                inviteCode = inviteCode,
+                                reissueInviteCodeUseCase = container.reissueInviteCodeUseCase,
+                                currentUserIdProvider = { FirebaseAuth.getInstance().currentUser?.uid },
+                            )
                         },
                     )
                     LaunchedEffect(invitePartnerViewModel) {
@@ -174,14 +181,22 @@ fun MoaZipApp(
                 composable(Route.Dashboard) {
                     val dashboardViewModel: DashboardViewModel = viewModel(
                         factory = viewModelFactory {
-                            DashboardViewModel(container.observeDashboardSummary)
+                            DashboardViewModel(
+                                observeDashboardSummary = container.observeDashboardSummary,
+                                getLatestInviteCodeUseCase = container.getLatestInviteCodeUseCase,
+                                currentUserIdProvider = { FirebaseAuth.getInstance().currentUser?.uid },
+                            )
                         },
                     )
                     LaunchedEffect(dashboardViewModel) {
                         dashboardViewModel.effect
                             .onEach { effect ->
-                                if (effect is DashboardEffect.NavigateToAssets) {
-                                    navController.navigate(Route.Assets)
+                                when (effect) {
+                                    DashboardEffect.NavigateToAssets -> navController.navigate(Route.Assets)
+                                    is DashboardEffect.NavigateToPartnerInvite -> {
+                                        navController.navigate(Route.invitePartner(effect.inviteCode))
+                                    }
+                                    is DashboardEffect.ShowMessage -> Unit
                                 }
                             }
                             .launchIn(this)

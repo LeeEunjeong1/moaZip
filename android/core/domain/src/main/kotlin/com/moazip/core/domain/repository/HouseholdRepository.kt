@@ -11,6 +11,13 @@ interface HouseholdRepository {
 
     suspend fun hasJoinedHousehold(userId: String): Boolean
 
+    suspend fun reissueInviteCode(
+        ownerUserId: String,
+        currentInviteCode: String,
+    ): String
+
+    suspend fun getLatestInviteCode(ownerUserId: String): String?
+
     suspend fun joinHouseholdWithInviteCode(
         userId: String,
         inviteCode: String,

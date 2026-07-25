@@ -1,19 +1,18 @@
-package com.moazip.feature.partner
+package com.moazip.feature.partner.createhome
 
+import com.moazip.feature.partner.R
+import com.moazip.feature.partner.createhome.contract.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -25,20 +24,15 @@ import com.moazip.core.ui.component.MoaZipTextField
 import com.moazip.core.ui.theme.MoaZipPalette
 
 @Composable
-fun JoinWithCodeRoute(
-    viewModel: JoinWithCodeViewModel,
-    onBack: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun CreateHomeRoute(viewModel: CreateHomeViewModel, modifier: Modifier = Modifier) {
     val state by viewModel.state.collectAsState()
-    JoinWithCodeScreen(state, viewModel::onIntent, onBack, modifier)
+    CreateHomeScreen(state = state, onIntent = viewModel::onIntent, modifier = modifier)
 }
 
 @Composable
-fun JoinWithCodeScreen(
-    state: JoinWithCodeState,
-    onIntent: (JoinWithCodeIntent) -> Unit,
-    onBack: () -> Unit,
+fun CreateHomeScreen(
+    state: CreateHomeState,
+    onIntent: (CreateHomeIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -47,42 +41,30 @@ fun JoinWithCodeScreen(
             .background(MoaZipPalette.Cream50)
             .padding(horizontal = 24.dp),
     ) {
-        Spacer(Modifier.height(28.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            TextButton(onClick = onBack) {
-                Text(stringResource(R.string.common_back), color = MoaZipPalette.Gray900)
-            }
-        }
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(42.dp))
         Text(
-            text = stringResource(R.string.join_code_title),
+            text = stringResource(R.string.create_home_title),
             color = MoaZipPalette.Gray900,
             fontSize = 26.sp,
             fontWeight = FontWeight.Bold,
         )
         Spacer(Modifier.height(4.dp))
         Text(
-            text = stringResource(R.string.join_code_description),
+            text = stringResource(R.string.create_home_description),
             color = MoaZipPalette.Gray500,
             style = MaterialTheme.typography.bodyMedium,
         )
         Spacer(Modifier.height(32.dp))
         Text(
-            text = stringResource(R.string.join_code_label),
+            text = stringResource(R.string.create_home_name_label),
             color = MoaZipPalette.Gray900,
             fontWeight = FontWeight.SemiBold,
         )
         Spacer(Modifier.height(10.dp))
         MoaZipTextField(
-            value = state.code,
-            onValueChange = { onIntent(JoinWithCodeIntent.CodeChanged(it)) },
-            placeholder = stringResource(R.string.join_code_placeholder),
-        )
-        Spacer(Modifier.height(12.dp))
-        Text(
-            text = stringResource(R.string.join_code_hint),
-            color = MoaZipPalette.Gray500,
-            style = MaterialTheme.typography.bodySmall,
+            value = state.homeName,
+            onValueChange = { onIntent(CreateHomeIntent.HomeNameChanged(it)) },
+            placeholder = stringResource(R.string.create_home_name_placeholder),
         )
         if (state.errorMessage != null) {
             Spacer(Modifier.height(10.dp))
@@ -95,19 +77,16 @@ fun JoinWithCodeScreen(
         Spacer(Modifier.weight(1f))
         MoaZipButton(
             text = stringResource(
-                if (state.isJoining) R.string.join_code_joining else R.string.join_code_button,
+                if (state.isCreating) R.string.create_home_creating else R.string.create_home_button,
             ),
-            onClick = { onIntent(JoinWithCodeIntent.JoinClicked) },
-            enabled = state.canJoin,
+            onClick = { onIntent(CreateHomeIntent.CreateClicked) },
+            enabled = state.canCreate,
         )
-        if (state.requiresHouseholdSwitch) {
-            Spacer(Modifier.height(12.dp))
-            MoaZipOutlinedButton(
-                text = stringResource(R.string.join_code_switch_household),
-                onClick = { onIntent(JoinWithCodeIntent.SwitchHouseholdClicked) },
-                enabled = state.canSwitchHousehold,
-            )
-        }
+        Spacer(Modifier.height(16.dp))
+        MoaZipOutlinedButton(
+            text = stringResource(R.string.invite_partner_join),
+            onClick = { onIntent(CreateHomeIntent.JoinWithCodeClicked) },
+        )
         Spacer(Modifier.height(48.dp))
     }
 }

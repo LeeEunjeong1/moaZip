@@ -1,5 +1,6 @@
-package com.moazip.feature.partner
+package com.moazip.feature.partner.joinwithcode
 
+import com.moazip.feature.partner.joinwithcode.contract.*
 import androidx.lifecycle.viewModelScope
 import com.moazip.core.domain.usecase.JoinHouseholdWithInviteCodeUseCase
 import com.moazip.core.model.JoinHouseholdResult

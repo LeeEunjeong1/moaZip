@@ -1,5 +1,7 @@
-package com.moazip.feature.partner
+package com.moazip.feature.partner.invitepartner
 
+import com.moazip.feature.partner.R
+import com.moazip.feature.partner.invitepartner.contract.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -69,12 +71,34 @@ fun InvitePartnerScreen(
 
         Spacer(Modifier.height(16.dp))
         MoaZipButton(
-            text = stringResource(if (state.isCodeCopied) R.string.invite_partner_copied else R.string.invite_partner_copy),
+            text = stringResource(R.string.invite_partner_copy),
             onClick = {
                 clipboardManager.setText(AnnotatedString(state.inviteCode))
                 onIntent(InvitePartnerIntent.CopyCodeClicked)
             },
         )
+        Spacer(Modifier.height(12.dp))
+        MoaZipOutlinedButton(
+            text = stringResource(
+                if (state.isReissuing) {
+                    R.string.invite_partner_reissuing
+                } else {
+                    R.string.invite_partner_reissue
+                },
+            ),
+            onClick = { onIntent(InvitePartnerIntent.ReissueCodeClicked) },
+            enabled = !state.isReissuing,
+        )
+        if (state.reissueError) {
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = stringResource(R.string.invite_partner_reissue_error),
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
         Spacer(Modifier.height(16.dp))
         if (state.isCodeCopied) {
             MoaZipButton(

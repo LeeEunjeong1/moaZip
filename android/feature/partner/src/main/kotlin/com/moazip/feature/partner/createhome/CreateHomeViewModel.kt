@@ -1,5 +1,6 @@
-package com.moazip.feature.partner
+package com.moazip.feature.partner.createhome
 
+import com.moazip.feature.partner.createhome.contract.*
 import androidx.lifecycle.viewModelScope
 import com.moazip.core.domain.usecase.CreateHouseholdUseCase
 import com.moazip.core.presentation.mvi.MviViewModel
