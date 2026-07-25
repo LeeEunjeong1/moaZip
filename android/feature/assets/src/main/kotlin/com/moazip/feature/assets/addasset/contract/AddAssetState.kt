@@ -10,7 +10,15 @@ data class AddAssetState(
     val category: AssetCategory? = null,
     val amount: String = "",
     val memo: String = "",
+    val isSaving: Boolean = false,
+    val errorMessage: String? = null,
 ) : UiState {
+    val canSave: Boolean
+        get() = name.isNotBlank() &&
+            category != null &&
+            amount.toLongOrNull() != null &&
+            !isSaving
+
     val availableCategories: List<AssetCategory>
         get() = when (assetType) {
             AssetType.ASSET -> listOf(

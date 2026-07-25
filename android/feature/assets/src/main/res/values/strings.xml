@@ -28,5 +28,6 @@
     <string name="add_asset_memo_placeholder">필요한 내용을 입력해 주세요</string>
 
     <string name="add_asset_save">저장하기</string>
+    <string name="add_asset_saving">저장 중…</string>
     <string name="add_asset_cancel">취소</string>
 </resources>

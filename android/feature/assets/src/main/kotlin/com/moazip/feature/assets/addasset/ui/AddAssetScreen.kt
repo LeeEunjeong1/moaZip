@@ -80,6 +80,9 @@ fun AddAssetScreen(
         }
 
         AddAssetActionButtons(
+            canSave = state.canSave,
+            isSaving = state.isSaving,
+            errorMessage = state.errorMessage,
             onSaveClick = { onIntent(AddAssetIntent.SaveClicked) },
             onCancelClick = { onIntent(AddAssetIntent.CancelClicked) },
         )

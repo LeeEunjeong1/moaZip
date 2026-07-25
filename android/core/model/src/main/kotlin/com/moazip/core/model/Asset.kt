@@ -16,15 +16,20 @@ data class Asset(
 enum class AssetKind { ASSET, INVESTMENT, LIABILITY }
 
 enum class AssetCategory {
+    LEASE_DEPOSIT,
     SAVINGS,
     RETIREMENT,
     HOUSING_SUBSCRIPTION,
+    CHECKING,
     CASH,
     DEPOSIT,
     LOAN,
     ISA,
+    OVERSEAS_STOCK,
+    DOMESTIC_STOCK,
     STOCK,
     DIVIDEND,
+    OTHER,
     ETC,
 }
 

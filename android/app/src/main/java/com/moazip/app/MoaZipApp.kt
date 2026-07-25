@@ -240,13 +240,20 @@ fun MoaZipApp(
                                 memberNames = listOfNotNull(
                                     FirebaseAuth.getInstance().currentUser?.displayName,
                                 ),
+                                addAssetUseCase = container.addAssetUseCase,
+                                currentUserIdProvider = {
+                                    FirebaseAuth.getInstance().currentUser?.uid
+                                },
                             )
                         },
                     )
                     LaunchedEffect(addAssetViewModel) {
                         addAssetViewModel.effect
                             .onEach { effect ->
-                                if (effect is AddAssetEffect.NavigateBack) {
+                                if (
+                                    effect is AddAssetEffect.NavigateBack ||
+                                    effect is AddAssetEffect.AssetSaved
+                                ) {
                                     navController.navigateToMainTab(MainTab.Assets)
                                 }
                             }
