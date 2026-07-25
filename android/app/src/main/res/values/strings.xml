@@ -1,0 +1,10 @@
+<resources>
+    <string name="bottom_navigation_home">홈</string>
+    <string name="bottom_navigation_assets">자산</string>
+    <string name="bottom_navigation_records">기록</string>
+    <string name="bottom_navigation_settings">설정</string>
+
+    <string name="add_asset_title">자산 추가</string>
+    <string name="records_title">기록</string>
+    <string name="settings_title">설정</string>
+</resources>
