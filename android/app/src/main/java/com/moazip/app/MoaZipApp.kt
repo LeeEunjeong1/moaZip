@@ -24,6 +24,9 @@ import com.moazip.app.navigation.MainScaffold
 import com.moazip.app.navigation.MainTab
 import com.moazip.app.navigation.MainTabPlaceholder
 import com.moazip.feature.assets.AssetsRoute
+import com.moazip.feature.assets.addasset.AddAssetViewModel
+import com.moazip.feature.assets.addasset.contract.AddAssetEffect
+import com.moazip.feature.assets.addasset.route.AddAssetRoute
 import com.moazip.feature.auth.LoginRoute
 import com.moazip.feature.auth.LoginViewModel
 import com.moazip.app.auth.FirebaseGoogleAuthClient
@@ -231,12 +234,30 @@ fun MoaZipApp(
                     }
                 }
                 composable(Route.AddAsset) {
+                    val addAssetViewModel: AddAssetViewModel = viewModel(
+                        factory = viewModelFactory {
+                            AddAssetViewModel(
+                                memberNames = listOfNotNull(
+                                    FirebaseAuth.getInstance().currentUser?.displayName,
+                                ),
+                            )
+                        },
+                    )
+                    LaunchedEffect(addAssetViewModel) {
+                        addAssetViewModel.effect
+                            .onEach { effect ->
+                                if (effect is AddAssetEffect.NavigateBack) {
+                                    navController.navigateToMainTab(MainTab.Assets)
+                                }
+                            }
+                            .launchIn(this)
+                    }
                     MainScaffold(
                         selectedTab = MainTab.Add,
                         onTabSelected = navController::navigateToMainTab,
                     ) { innerPadding ->
-                        MainTabPlaceholder(
-                            titleRes = R.string.add_asset_title,
+                        AddAssetRoute(
+                            viewModel = addAssetViewModel,
                             modifier = Modifier.padding(innerPadding),
                         )
                     }

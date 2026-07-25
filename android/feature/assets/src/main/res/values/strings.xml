@@ -1,0 +1,32 @@
+<resources>
+    <string name="add_asset_title">자산 추가</string>
+    <string name="add_asset_description">새로운 자산 정보를 입력해 주세요.</string>
+
+    <string name="add_asset_name_label">자산명</string>
+    <string name="add_asset_name_placeholder">예: 신한은행 예금</string>
+    <string name="add_asset_owner_label">소유자</string>
+    <string name="add_asset_owner_common">공동</string>
+    <string name="add_asset_category_label">분류</string>
+    <string name="add_asset_detail_category_label">세부 분류</string>
+    <string name="add_asset_type_asset">자산</string>
+    <string name="add_asset_type_investment">투자</string>
+    <string name="add_asset_type_debt">부채</string>
+    <string name="add_asset_category_lease_deposit">보증금</string>
+    <string name="add_asset_category_deposit">예금</string>
+    <string name="add_asset_category_savings">적금</string>
+    <string name="add_asset_category_loan">대출</string>
+    <string name="add_asset_category_checking">입출금</string>
+    <string name="add_asset_category_retirement">퇴직금</string>
+    <string name="add_asset_category_housing_subscription">청약</string>
+    <string name="add_asset_category_isa">ISA</string>
+    <string name="add_asset_category_overseas_stock">해외주식</string>
+    <string name="add_asset_category_domestic_stock">국내주식</string>
+    <string name="add_asset_category_other">기타</string>
+    <string name="add_asset_amount_label">현재 금액</string>
+    <string name="add_asset_amount_placeholder">금액을 입력해 주세요</string>
+    <string name="add_asset_memo_label">메모</string>
+    <string name="add_asset_memo_placeholder">필요한 내용을 입력해 주세요</string>
+
+    <string name="add_asset_save">저장하기</string>
+    <string name="add_asset_cancel">취소</string>
+</resources>
