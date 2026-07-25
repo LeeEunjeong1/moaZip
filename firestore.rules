@@ -33,6 +33,11 @@ service cloud.firestore {
         allow update, delete: if request.auth != null
           && exists(/databases/$(database)/documents/households/$(householdId)/members/$(request.auth.uid));
       }
+
+      match /assets/{assetId} {
+        allow read, create, update, delete: if request.auth != null
+          && exists(/databases/$(database)/documents/households/$(householdId)/members/$(request.auth.uid));
+      }
     }
 
     match /inviteCodes/{inviteCode} {
