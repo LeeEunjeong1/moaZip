@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -13,11 +14,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
+import com.moazip.app.navigation.MainScaffold
+import com.moazip.app.navigation.MainTab
+import com.moazip.app.navigation.MainTabPlaceholder
 import com.moazip.feature.assets.AssetsRoute
 import com.moazip.feature.auth.LoginRoute
 import com.moazip.feature.auth.LoginViewModel
@@ -47,7 +52,9 @@ private object Route {
     const val InvitePartner = "invite_partner"
     const val InviteCodeArgument = "inviteCode"
     const val JoinWithCode = "join_with_code"
-    const val Assets = "assets"
+    const val AddAsset = "add_asset"
+    const val Records = "records"
+    const val Settings = "settings"
 
     fun invitePartner(inviteCode: String) = "$InvitePartner/$inviteCode"
 }
@@ -192,7 +199,9 @@ fun MoaZipApp(
                         dashboardViewModel.effect
                             .onEach { effect ->
                                 when (effect) {
-                                    DashboardEffect.NavigateToAssets -> navController.navigate(Route.Assets)
+                                    DashboardEffect.NavigateToAssets -> {
+                                        navController.navigateToMainTab(MainTab.Assets)
+                                    }
                                     is DashboardEffect.NavigateToPartnerInvite -> {
                                         navController.navigate(Route.invitePartner(effect.inviteCode))
                                     }
@@ -201,10 +210,70 @@ fun MoaZipApp(
                             }
                             .launchIn(this)
                     }
-                    DashboardRoute(viewModel = dashboardViewModel)
+                    MainScaffold(
+                        selectedTab = MainTab.Home,
+                        onTabSelected = navController::navigateToMainTab,
+                    ) { innerPadding ->
+                        DashboardRoute(
+                            viewModel = dashboardViewModel,
+                            modifier = Modifier.padding(innerPadding),
+                        )
+                    }
                 }
-                composable(Route.Assets) { AssetsRoute() }
+                composable(MainTab.Assets.route) {
+                    MainScaffold(
+                        selectedTab = MainTab.Assets,
+                        onTabSelected = navController::navigateToMainTab,
+                    ) { innerPadding ->
+                        Box(modifier = Modifier.padding(innerPadding)) {
+                            AssetsRoute()
+                        }
+                    }
+                }
+                composable(Route.AddAsset) {
+                    MainScaffold(
+                        selectedTab = MainTab.Add,
+                        onTabSelected = navController::navigateToMainTab,
+                    ) { innerPadding ->
+                        MainTabPlaceholder(
+                            titleRes = R.string.add_asset_title,
+                            modifier = Modifier.padding(innerPadding),
+                        )
+                    }
+                }
+                composable(Route.Records) {
+                    MainScaffold(
+                        selectedTab = MainTab.Records,
+                        onTabSelected = navController::navigateToMainTab,
+                    ) { innerPadding ->
+                        MainTabPlaceholder(
+                            titleRes = R.string.records_title,
+                            modifier = Modifier.padding(innerPadding),
+                        )
+                    }
+                }
+                composable(Route.Settings) {
+                    MainScaffold(
+                        selectedTab = MainTab.Settings,
+                        onTabSelected = navController::navigateToMainTab,
+                    ) { innerPadding ->
+                        MainTabPlaceholder(
+                            titleRes = R.string.settings_title,
+                            modifier = Modifier.padding(innerPadding),
+                        )
+                    }
+                }
             }
+        }
+    }
+}
+
+private fun NavHostController.navigateToMainTab(tab: MainTab) {
+    navigate(tab.route) {
+        launchSingleTop = true
+        restoreState = true
+        popUpTo(Route.Dashboard) {
+            saveState = true
         }
     }
 }
