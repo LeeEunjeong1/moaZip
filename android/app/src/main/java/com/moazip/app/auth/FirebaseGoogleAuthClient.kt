@@ -12,7 +12,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.moazip.app.R
 import com.moazip.core.domain.repository.UserRepository
 import com.moazip.core.model.UserProfile
-import com.moazip.feature.auth.GoogleLoginOutcome
+import com.moazip.feature.auth.contract.GoogleLoginOutcome
 import kotlinx.coroutines.tasks.await
 
 class FirebaseGoogleAuthClient(

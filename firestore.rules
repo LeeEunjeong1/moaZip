@@ -7,6 +7,44 @@ service cloud.firestore {
       allow create: if request.auth != null
         && request.auth.uid == userId
         && request.resource.data.uid == userId;
+      allow update: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.data.uid == resource.data.uid;
+    }
+
+    match /households/{householdId} {
+      allow create: if request.auth != null
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.id == householdId;
+      allow read: if request.auth != null
+        && (resource.data.ownerId == request.auth.uid
+          || exists(/databases/$(database)/documents/households/$(householdId)/members/$(request.auth.uid)));
+      allow update, delete: if request.auth != null
+        && exists(/databases/$(database)/documents/households/$(householdId)/members/$(request.auth.uid));
+
+      match /members/{memberId} {
+        allow create: if request.auth != null
+          && memberId == request.auth.uid
+          && request.resource.data.id == request.auth.uid
+          && request.resource.data.householdId == householdId;
+        allow read: if request.auth != null
+          && (memberId == request.auth.uid
+            || exists(/databases/$(database)/documents/households/$(householdId)/members/$(request.auth.uid)));
+        allow update, delete: if request.auth != null
+          && exists(/databases/$(database)/documents/households/$(householdId)/members/$(request.auth.uid));
+      }
+    }
+
+    match /inviteCodes/{inviteCode} {
+      allow create: if request.auth != null
+        && request.resource.data.code == inviteCode
+        && request.resource.data.createdBy == request.auth.uid;
+      allow read: if request.auth != null;
+    }
+
+    match /{path=**}/members/{memberId} {
+      allow read: if request.auth != null
+        && resource.data.id == request.auth.uid;
     }
   }
 }

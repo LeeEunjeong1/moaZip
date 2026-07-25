@@ -1,5 +1,7 @@
-package com.moazip.feature.partner
+package com.moazip.feature.partner.invitepartner
 
+import com.moazip.feature.partner.R
+import com.moazip.feature.partner.invitepartner.contract.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -17,7 +19,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -38,6 +42,8 @@ fun InvitePartnerScreen(
     onIntent: (InvitePartnerIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val clipboardManager = LocalClipboardManager.current
+
     Column(
         modifier = modifier.fillMaxSize().background(MoaZipPalette.Cream50).padding(horizontal = 24.dp),
     ) {
@@ -65,14 +71,46 @@ fun InvitePartnerScreen(
 
         Spacer(Modifier.height(16.dp))
         MoaZipButton(
-            text = stringResource(if (state.isCodeCopied) R.string.invite_partner_copied else R.string.invite_partner_copy),
-            onClick = { onIntent(InvitePartnerIntent.CopyCodeClicked) },
+            text = stringResource(R.string.invite_partner_copy),
+            onClick = {
+                clipboardManager.setText(AnnotatedString(state.inviteCode))
+                onIntent(InvitePartnerIntent.CopyCodeClicked)
+            },
         )
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(12.dp))
         MoaZipOutlinedButton(
-            text = stringResource(R.string.invite_partner_later),
-            onClick = { onIntent(InvitePartnerIntent.LaterClicked) },
+            text = stringResource(
+                if (state.isReissuing) {
+                    R.string.invite_partner_reissuing
+                } else {
+                    R.string.invite_partner_reissue
+                },
+            ),
+            onClick = { onIntent(InvitePartnerIntent.ReissueCodeClicked) },
+            enabled = !state.isReissuing,
         )
+        if (state.reissueError) {
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = stringResource(R.string.invite_partner_reissue_error),
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+        Spacer(Modifier.height(16.dp))
+        if (state.isCodeCopied) {
+            MoaZipButton(
+                text = stringResource(R.string.invite_partner_go_dashboard),
+                onClick = { onIntent(InvitePartnerIntent.LaterClicked) },
+            )
+        } else {
+            MoaZipOutlinedButton(
+                text = stringResource(R.string.invite_partner_later),
+                onClick = { onIntent(InvitePartnerIntent.LaterClicked) },
+            )
+        }
         Spacer(Modifier.height(12.dp))
         MoaZipOutlinedButton(
             text = stringResource(R.string.invite_partner_join),

@@ -1,5 +1,6 @@
 package com.moazip.feature.dashboard
 
+import com.moazip.feature.dashboard.contract.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.moazip.core.ui.component.MoaZipButton
 import com.moazip.core.ui.component.MoaZipCard
+import com.moazip.core.ui.component.MoaZipOutlinedButton
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -68,6 +70,11 @@ fun DashboardScreen(
         MoaZipButton(
             text = "자산 목록 보기",
             onClick = { onIntent(DashboardIntent.OpenAssets) },
+        )
+        MoaZipOutlinedButton(
+            text = if (state.isInviteLoading) "초대 코드 불러오는 중..." else "파트너 초대하기",
+            onClick = { onIntent(DashboardIntent.OpenPartnerInvite) },
+            enabled = !state.isInviteLoading,
         )
     }
 }
