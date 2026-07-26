@@ -7,7 +7,7 @@ import com.moazip.core.model.UserProfile
 import kotlinx.coroutines.tasks.await
 
 class FirebaseUserRepository(
-    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance(),
+    private val firestore: FirebaseFirestore,
 ) : UserRepository {
     override suspend fun createIfAbsent(user: UserProfile) {
         val userDocument = firestore.collection(USERS_COLLECTION).document(user.uid)

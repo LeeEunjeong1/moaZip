@@ -2,8 +2,12 @@ package com.moazip.feature.auth
 
 import com.moazip.feature.auth.contract.*
 import com.moazip.core.presentation.mvi.MviViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class LoginViewModel : MviViewModel<LoginIntent, LoginState, LoginEffect>(LoginState()) {
+@HiltViewModel
+class LoginViewModel @Inject constructor() :
+    MviViewModel<LoginIntent, LoginState, LoginEffect>(LoginState()) {
     override fun onIntent(intent: LoginIntent) {
         when (intent) {
             LoginIntent.GoogleLoginClicked -> {

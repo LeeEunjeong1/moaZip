@@ -7,7 +7,7 @@ import com.moazip.core.model.NewAsset
 import kotlinx.coroutines.tasks.await
 
 class FirebaseAssetRepository(
-    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance(),
+    private val firestore: FirebaseFirestore,
 ) : AssetRepository {
     override suspend fun addAsset(
         userId: String,

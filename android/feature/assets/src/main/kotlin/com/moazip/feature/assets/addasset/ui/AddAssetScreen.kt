@@ -52,7 +52,7 @@ fun AddAssetScreen(
                 onValueChange = { onIntent(AddAssetIntent.NameChanged(it)) },
             )
             OwnerSelector(
-                memberNames = state.memberNames,
+                members = state.members,
                 selectedOwner = state.owner,
                 onOwnerSelected = { onIntent(AddAssetIntent.OwnerSelected(it)) },
             )
@@ -82,7 +82,7 @@ fun AddAssetScreen(
         AddAssetActionButtons(
             canSave = state.canSave,
             isSaving = state.isSaving,
-            errorMessage = state.errorMessage,
+            errorMessage = state.error?.toMessage(),
             onSaveClick = { onIntent(AddAssetIntent.SaveClicked) },
             onCancelClick = { onIntent(AddAssetIntent.CancelClicked) },
         )
