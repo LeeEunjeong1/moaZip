@@ -6,7 +6,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.moazip.app.auth.FirebaseGoogleAuthClient
+import com.moazip.app.auth.GoogleSignInCoordinator
 import com.moazip.app.navigation.AppRoute
 import com.moazip.app.navigation.HouseholdGateScreen
 import com.moazip.core.domain.auth.CurrentUserProvider
@@ -16,7 +16,7 @@ import com.moazip.feature.auth.LoginViewModel
 
 internal fun NavGraphBuilder.authGraph(
     navController: NavHostController,
-    googleAuthClient: FirebaseGoogleAuthClient,
+    googleSignInCoordinator: GoogleSignInCoordinator,
     hasJoinedHouseholdUseCase: HasJoinedHouseholdUseCase,
     currentUserProvider: CurrentUserProvider,
 ) {
@@ -24,7 +24,7 @@ internal fun NavGraphBuilder.authGraph(
         val viewModel: LoginViewModel = hiltViewModel()
         LoginRoute(
             viewModel = viewModel,
-            onGoogleLoginRequested = googleAuthClient::signIn,
+            onGoogleLoginRequested = googleSignInCoordinator::signIn,
             onLoginSucceeded = {
                 navController.navigate(AppRoute.HouseholdGate) {
                     popUpTo(AppRoute.Login) { inclusive = true }

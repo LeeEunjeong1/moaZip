@@ -3,6 +3,7 @@ package com.moazip.app.di
 import com.google.firebase.auth.FirebaseAuth
 import com.moazip.core.data.InMemoryDashboardRepository
 import com.moazip.core.domain.auth.CurrentUserProvider
+import com.moazip.core.domain.repository.AuthRepository
 import com.moazip.core.domain.repository.AssetRepository
 import com.moazip.core.domain.repository.DashboardRepository
 import com.moazip.core.domain.repository.HouseholdRepository
@@ -15,6 +16,7 @@ import com.moazip.core.domain.usecase.JoinHouseholdWithInviteCodeUseCase
 import com.moazip.core.domain.usecase.ObserveDashboardSummary
 import com.moazip.core.domain.usecase.ReissueInviteCodeUseCase
 import com.moazip.core.firebase.FirebaseAssetRepository
+import com.moazip.core.firebase.FirebaseAuthRepository
 import com.moazip.core.firebase.FirebaseCurrentUserProvider
 import com.moazip.core.firebase.FirebaseHouseholdRepository
 import com.moazip.core.firebase.FirebaseUserRepository
@@ -39,6 +41,13 @@ object AppModule {
     @Provides
     @Singleton
     fun provideUserRepository(): UserRepository = FirebaseUserRepository()
+
+    @Provides
+    @Singleton
+    fun provideAuthRepository(
+        firebaseAuth: FirebaseAuth,
+        userRepository: UserRepository,
+    ): AuthRepository = FirebaseAuthRepository(firebaseAuth, userRepository)
 
     @Provides
     @Singleton
