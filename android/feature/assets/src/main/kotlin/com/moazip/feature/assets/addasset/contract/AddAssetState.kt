@@ -11,7 +11,7 @@ data class AddAssetState(
     val amount: String = "",
     val memo: String = "",
     val isSaving: Boolean = false,
-    val errorMessage: String? = null,
+    val error: AddAssetError? = null,
 ) : UiState {
     val canSave: Boolean
         get() = name.isNotBlank() &&

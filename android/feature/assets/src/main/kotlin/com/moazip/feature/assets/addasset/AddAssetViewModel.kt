@@ -6,6 +6,7 @@ import com.moazip.core.model.AssetKind
 import com.moazip.core.model.NewAsset
 import com.moazip.core.presentation.mvi.MviViewModel
 import com.moazip.feature.assets.addasset.contract.AddAssetEffect
+import com.moazip.feature.assets.addasset.contract.AddAssetError
 import com.moazip.feature.assets.addasset.contract.AddAssetIntent
 import com.moazip.feature.assets.addasset.contract.AddAssetState
 import com.moazip.feature.assets.addasset.contract.AssetCategory
@@ -30,18 +31,18 @@ class AddAssetViewModel @Inject constructor(
 ) {
     override fun onIntent(intent: AddAssetIntent) {
         when (intent) {
-            is AddAssetIntent.NameChanged -> reduce { copy(name = intent.value, errorMessage = null) }
-            is AddAssetIntent.OwnerSelected -> reduce { copy(owner = intent.value, errorMessage = null) }
+            is AddAssetIntent.NameChanged -> reduce { copy(name = intent.value, error = null) }
+            is AddAssetIntent.OwnerSelected -> reduce { copy(owner = intent.value, error = null) }
             is AddAssetIntent.AssetTypeSelected -> reduce {
-                copy(assetType = intent.value, category = null, errorMessage = null)
+                copy(assetType = intent.value, category = null, error = null)
             }
             is AddAssetIntent.CategorySelected -> reduce {
-                copy(category = intent.value, errorMessage = null)
+                copy(category = intent.value, error = null)
             }
             is AddAssetIntent.AmountChanged -> reduce {
-                copy(amount = intent.value.filter(Char::isDigit), errorMessage = null)
+                copy(amount = intent.value.filter(Char::isDigit), error = null)
             }
-            is AddAssetIntent.MemoChanged -> reduce { copy(memo = intent.value, errorMessage = null) }
+            is AddAssetIntent.MemoChanged -> reduce { copy(memo = intent.value, error = null) }
             AddAssetIntent.SaveClicked -> saveAsset()
             AddAssetIntent.CancelClicked -> postEffect(AddAssetEffect.NavigateBack)
         }
@@ -51,18 +52,18 @@ class AddAssetViewModel @Inject constructor(
         val currentState = state.value
         val currentUserId = currentUserProvider.userId
         if (!currentState.canSave) {
-            reduce { copy(errorMessage = "필수 항목을 모두 입력해 주세요.") }
+            reduce { copy(error = AddAssetError.INVALID_INPUT) }
             return
         }
         if (currentUserId == null) {
-            reduce { copy(errorMessage = "로그인 정보를 확인할 수 없어요. 다시 로그인해 주세요.") }
+            reduce { copy(error = AddAssetError.UNAUTHENTICATED) }
             return
         }
 
         val selectedCategory = checkNotNull(currentState.category)
         val amount = checkNotNull(currentState.amount.toLongOrNull())
         viewModelScope.launch {
-            reduce { copy(isSaving = true, errorMessage = null) }
+            reduce { copy(isSaving = true, error = null) }
             runCatching {
                 addAssetUseCase(
                     userId = currentUserId,
@@ -83,7 +84,7 @@ class AddAssetViewModel @Inject constructor(
                 reduce {
                     copy(
                         isSaving = false,
-                        errorMessage = "자산을 저장하지 못했어요. 잠시 후 다시 시도해 주세요.",
+                        error = AddAssetError.SAVE_FAILED,
                     )
                 }
             }
