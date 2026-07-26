@@ -52,7 +52,7 @@ fun AddAssetScreen(
                 onValueChange = { onIntent(AddAssetIntent.NameChanged(it)) },
             )
             OwnerSelector(
-                memberNames = state.memberNames,
+                members = state.members,
                 selectedOwner = state.owner,
                 onOwnerSelected = { onIntent(AddAssetIntent.OwnerSelected(it)) },
             )

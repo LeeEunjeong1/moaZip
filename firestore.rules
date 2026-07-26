@@ -2,8 +2,25 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    function currentHouseholdId() {
+      return get(
+        /databases/$(database)/documents/users/$(request.auth.uid)
+      ).data.householdId;
+    }
+
+    function sharesCurrentHousehold(userId) {
+      return exists(
+          /databases/$(database)/documents/households/$(currentHouseholdId())/members/$(request.auth.uid)
+        )
+        && exists(
+          /databases/$(database)/documents/households/$(currentHouseholdId())/members/$(userId)
+        );
+    }
+
     match /users/{userId} {
-      allow read: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null
+        && (request.auth.uid == userId
+          || sharesCurrentHousehold(userId));
       allow create: if request.auth != null
         && request.auth.uid == userId
         && request.resource.data.uid == userId;

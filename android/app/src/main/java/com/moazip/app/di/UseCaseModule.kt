@@ -6,6 +6,7 @@ import com.moazip.core.domain.repository.HouseholdRepository
 import com.moazip.core.domain.usecase.AddAssetUseCase
 import com.moazip.core.domain.usecase.CreateHouseholdUseCase
 import com.moazip.core.domain.usecase.GetLatestInviteCodeUseCase
+import com.moazip.core.domain.usecase.GetHouseholdMembersUseCase
 import com.moazip.core.domain.usecase.HasJoinedHouseholdUseCase
 import com.moazip.core.domain.usecase.JoinHouseholdWithInviteCodeUseCase
 import com.moazip.core.domain.usecase.ObserveDashboardSummary
@@ -37,6 +38,10 @@ object UseCaseModule {
     @Provides
     fun provideGetLatestInviteCodeUseCase(repository: HouseholdRepository) =
         GetLatestInviteCodeUseCase(repository)
+
+    @Provides
+    fun provideGetHouseholdMembersUseCase(repository: HouseholdRepository) =
+        GetHouseholdMembersUseCase(repository)
 
     @Provides
     fun provideAddAssetUseCase(repository: AssetRepository) =

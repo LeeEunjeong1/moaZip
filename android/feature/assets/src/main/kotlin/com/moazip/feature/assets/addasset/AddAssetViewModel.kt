@@ -2,6 +2,8 @@ package com.moazip.feature.assets.addasset
 
 import androidx.lifecycle.viewModelScope
 import com.moazip.core.domain.usecase.AddAssetUseCase
+import com.moazip.core.domain.usecase.GetHouseholdMembersUseCase
+import com.moazip.core.model.HouseholdMember
 import com.moazip.core.model.AssetKind
 import com.moazip.core.model.NewAsset
 import com.moazip.core.presentation.mvi.MviViewModel
@@ -20,15 +22,19 @@ import javax.inject.Inject
 @HiltViewModel
 class AddAssetViewModel @Inject constructor(
     private val addAssetUseCase: AddAssetUseCase,
+    private val getHouseholdMembersUseCase: GetHouseholdMembersUseCase,
     private val currentUserProvider: CurrentUserProvider,
 ) : MviViewModel<AddAssetIntent, AddAssetState, AddAssetEffect>(
     initialState = AddAssetState(
-        memberNames = listOfNotNull(currentUserProvider.displayName)
-            .map(String::trim)
-            .filter(String::isNotEmpty)
-            .distinct(),
+        members = currentUserProvider.userId?.let { userId ->
+            listOf(HouseholdMember(userId, currentUserProvider.displayName))
+        }.orEmpty(),
     ),
 ) {
+    init {
+        loadHouseholdMembers()
+    }
+
     override fun onIntent(intent: AddAssetIntent) {
         when (intent) {
             is AddAssetIntent.NameChanged -> reduce { copy(name = intent.value, error = null) }
@@ -69,7 +75,7 @@ class AddAssetViewModel @Inject constructor(
                     userId = currentUserId,
                     asset = NewAsset(
                         name = currentState.name,
-                        ownerUserId = currentState.owner.userId(currentUserId),
+                        ownerUserId = currentState.owner.userId(),
                         ownerDisplayName = currentState.owner.displayName(),
                         kind = currentState.assetType.toModel(),
                         category = selectedCategory.toModel(),
@@ -91,9 +97,22 @@ class AddAssetViewModel @Inject constructor(
         }
     }
 
-    private fun OwnerSelection.userId(currentUserId: String): String? = when (this) {
+    private fun loadHouseholdMembers() {
+        val currentUserId = currentUserProvider.userId ?: return
+        viewModelScope.launch {
+            runCatching {
+                getHouseholdMembersUseCase(currentUserId)
+            }.onSuccess { members ->
+                reduce { copy(members = members, error = null) }
+            }.onFailure {
+                reduce { copy(error = AddAssetError.MEMBER_LOAD_FAILED) }
+            }
+        }
+    }
+
+    private fun OwnerSelection.userId(): String? = when (this) {
         OwnerSelection.Common -> null
-        is OwnerSelection.Member -> currentUserId
+        is OwnerSelection.Member -> userId
     }
 
     private fun OwnerSelection.displayName(): String? = when (this) {

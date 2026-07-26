@@ -1,10 +1,11 @@
 package com.moazip.feature.assets.addasset.contract
 
 import com.moazip.core.presentation.mvi.UiState
+import com.moazip.core.model.HouseholdMember
 
 data class AddAssetState(
     val name: String = "",
-    val memberNames: List<String> = emptyList(),
+    val members: List<HouseholdMember> = emptyList(),
     val owner: OwnerSelection = OwnerSelection.Common,
     val assetType: AssetType = AssetType.ASSET,
     val category: AssetCategory? = null,

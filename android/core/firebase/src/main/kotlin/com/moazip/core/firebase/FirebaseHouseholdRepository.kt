@@ -6,6 +6,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.moazip.core.domain.repository.HouseholdRepository
 import com.moazip.core.model.HouseholdCreationResult
+import com.moazip.core.model.HouseholdMember
 import com.moazip.core.model.JoinHouseholdResult
 import kotlinx.coroutines.tasks.await
 import java.util.Locale
@@ -263,6 +264,58 @@ class FirebaseHouseholdRepository(
         return true
     }
 
+    override suspend fun getHouseholdMembers(userId: String): List<HouseholdMember> {
+        val householdId = findHouseholdId(userId)
+            ?: throw IllegalStateException("User does not belong to a household.")
+        val memberSnapshots = firestore
+            .collection(HOUSEHOLDS_COLLECTION)
+            .document(householdId)
+            .collection(MEMBERS_COLLECTION)
+            .get()
+            .await()
+            .documents
+
+        return memberSnapshots.map { memberSnapshot ->
+            val memberId = memberSnapshot.getString(ID_FIELD) ?: memberSnapshot.id
+            val userSnapshot = firestore
+                .collection(USERS_COLLECTION)
+                .document(memberId)
+                .get()
+                .await()
+            HouseholdMember(
+                userId = memberId,
+                displayName = userSnapshot.getString(DISPLAY_NAME_FIELD)
+                    ?.trim()
+                    ?.takeIf(String::isNotEmpty)
+                    ?: userSnapshot.getString(EMAIL_FIELD)
+                        ?.trim()
+                        ?.takeIf(String::isNotEmpty),
+            )
+        }
+    }
+
+    private suspend fun findHouseholdId(userId: String): String? {
+        val savedHouseholdId = firestore
+            .collection(USERS_COLLECTION)
+            .document(userId)
+            .get()
+            .await()
+            .getString(HOUSEHOLD_ID_FIELD)
+        if (!savedHouseholdId.isNullOrBlank()) return savedHouseholdId
+
+        val membership = firestore
+            .collectionGroup(MEMBERS_COLLECTION)
+            .whereEqualTo(ID_FIELD, userId)
+            .limit(1)
+            .get()
+            .await()
+            .documents
+            .firstOrNull()
+
+        return membership?.getString(HOUSEHOLD_ID_FIELD)
+            ?: membership?.reference?.parent?.parent?.id
+    }
+
     /**
      * Membership documents remain the source of truth. This denormalized reference only speeds up
      * app startup, so a rules deployment delay must not make household creation or restoration fail.
@@ -293,6 +346,8 @@ class FirebaseHouseholdRepository(
         const val INVITE_CODES_COLLECTION = "inviteCodes"
         const val ID_FIELD = "id"
         const val NAME_FIELD = "name"
+        const val DISPLAY_NAME_FIELD = "displayName"
+        const val EMAIL_FIELD = "email"
         const val OWNER_ID_FIELD = "ownerId"
         const val INVITE_CODE_FIELD = "inviteCode"
         const val HOUSEHOLD_ID_FIELD = "householdId"
