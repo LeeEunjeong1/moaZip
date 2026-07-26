@@ -12,7 +12,7 @@ import java.util.Locale
 import kotlin.random.Random
 
 class FirebaseHouseholdRepository(
-    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance(),
+    private val firestore: FirebaseFirestore,
 ) : HouseholdRepository {
     override suspend fun createHousehold(
         ownerUserId: String,

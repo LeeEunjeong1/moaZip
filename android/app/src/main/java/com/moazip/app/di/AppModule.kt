@@ -1,6 +1,7 @@
 package com.moazip.app.di
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.moazip.core.data.InMemoryDashboardRepository
 import com.moazip.core.domain.auth.CurrentUserProvider
 import com.moazip.core.domain.repository.AuthRepository
@@ -35,12 +36,17 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideFirebaseFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
+
+    @Provides
+    @Singleton
     fun provideCurrentUserProvider(firebaseAuth: FirebaseAuth): CurrentUserProvider =
         FirebaseCurrentUserProvider(firebaseAuth)
 
     @Provides
     @Singleton
-    fun provideUserRepository(): UserRepository = FirebaseUserRepository()
+    fun provideUserRepository(firestore: FirebaseFirestore): UserRepository =
+        FirebaseUserRepository(firestore)
 
     @Provides
     @Singleton
@@ -51,11 +57,13 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideHouseholdRepository(): HouseholdRepository = FirebaseHouseholdRepository()
+    fun provideHouseholdRepository(firestore: FirebaseFirestore): HouseholdRepository =
+        FirebaseHouseholdRepository(firestore)
 
     @Provides
     @Singleton
-    fun provideAssetRepository(): AssetRepository = FirebaseAssetRepository()
+    fun provideAssetRepository(firestore: FirebaseFirestore): AssetRepository =
+        FirebaseAssetRepository(firestore)
 
     @Provides
     @Singleton
