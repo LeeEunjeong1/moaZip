@@ -3,9 +3,9 @@ package com.moazip.app.navigation
 internal enum class MainTab(
     val route: String,
 ) {
-    Home("dashboard"),
+    Home(AppRoute.Dashboard),
     Assets("assets"),
-    Add("add_asset"),
-    Records("records"),
-    Settings("settings"),
+    Add(AppRoute.AddAsset),
+    Records(AppRoute.Records),
+    Settings(AppRoute.Settings),
 }

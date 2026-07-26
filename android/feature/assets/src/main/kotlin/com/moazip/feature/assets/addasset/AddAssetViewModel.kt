@@ -12,14 +12,17 @@ import com.moazip.feature.assets.addasset.contract.AssetCategory
 import com.moazip.feature.assets.addasset.contract.AssetType
 import com.moazip.feature.assets.addasset.contract.OwnerSelection
 import kotlinx.coroutines.launch
+import com.moazip.core.domain.auth.CurrentUserProvider
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class AddAssetViewModel(
-    memberNames: List<String>,
+@HiltViewModel
+class AddAssetViewModel @Inject constructor(
     private val addAssetUseCase: AddAssetUseCase,
-    private val currentUserIdProvider: () -> String?,
+    private val currentUserProvider: CurrentUserProvider,
 ) : MviViewModel<AddAssetIntent, AddAssetState, AddAssetEffect>(
     initialState = AddAssetState(
-        memberNames = memberNames
+        memberNames = listOfNotNull(currentUserProvider.displayName)
             .map(String::trim)
             .filter(String::isNotEmpty)
             .distinct(),
@@ -46,7 +49,7 @@ class AddAssetViewModel(
 
     private fun saveAsset() {
         val currentState = state.value
-        val currentUserId = currentUserIdProvider()
+        val currentUserId = currentUserProvider.userId
         if (!currentState.canSave) {
             reduce { copy(errorMessage = "필수 항목을 모두 입력해 주세요.") }
             return

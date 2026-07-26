@@ -9,11 +9,15 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import com.moazip.core.domain.auth.CurrentUserProvider
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class DashboardViewModel(
+@HiltViewModel
+class DashboardViewModel @Inject constructor(
     private val observeDashboardSummary: ObserveDashboardSummary,
     private val getLatestInviteCodeUseCase: GetLatestInviteCodeUseCase,
-    private val currentUserIdProvider: () -> String?,
+    private val currentUserProvider: CurrentUserProvider,
 ) : MviViewModel<DashboardIntent, DashboardState, DashboardEffect>(DashboardState()) {
     private var observeJob: Job? = null
 
@@ -31,7 +35,7 @@ class DashboardViewModel(
 
     private fun openPartnerInvite() {
         if (state.value.isInviteLoading) return
-        val userId = currentUserIdProvider() ?: return
+        val userId = currentUserProvider.userId ?: return
         viewModelScope.launch {
             reduce { copy(isInviteLoading = true) }
             runCatching { getLatestInviteCodeUseCase(userId) }

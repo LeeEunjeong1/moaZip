@@ -1,7 +1,7 @@
 package com.moazip.app.auth
 
 import android.util.Log
-import androidx.activity.ComponentActivity
+import android.content.Context
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialCancellationException
@@ -14,24 +14,29 @@ import com.moazip.core.domain.repository.UserRepository
 import com.moazip.core.model.UserProfile
 import com.moazip.feature.auth.contract.GoogleLoginOutcome
 import kotlinx.coroutines.tasks.await
+import dagger.hilt.android.qualifiers.ActivityContext
+import dagger.hilt.android.scopes.ActivityScoped
+import javax.inject.Inject
 
-class FirebaseGoogleAuthClient(
-    private val activity: ComponentActivity,
+@ActivityScoped
+class FirebaseGoogleAuthClient @Inject constructor(
+    @param:ActivityContext private val activityContext: Context,
     private val userRepository: UserRepository,
-    private val credentialManager: CredentialManager = CredentialManager.create(activity),
-    private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance(),
+    private val firebaseAuth: FirebaseAuth,
 ) {
+    private val credentialManager = CredentialManager.create(activityContext)
+
     fun hasAuthenticatedUser(): Boolean = firebaseAuth.currentUser != null
 
     suspend fun signIn(): GoogleLoginOutcome = try {
         val googleIdOption = GetSignInWithGoogleOption.Builder(
-            activity.getString(R.string.default_web_client_id),
+            activityContext.getString(R.string.default_web_client_id),
         )
             .build()
         val request = GetCredentialRequest.Builder()
             .addCredentialOption(googleIdOption)
             .build()
-        val credential = credentialManager.getCredential(activity, request).credential
+        val credential = credentialManager.getCredential(activityContext, request).credential
         if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
             val googleCredential = GoogleIdTokenCredential.createFrom(credential.data)
             val firebaseCredential = GoogleAuthProvider.getCredential(googleCredential.idToken, null)

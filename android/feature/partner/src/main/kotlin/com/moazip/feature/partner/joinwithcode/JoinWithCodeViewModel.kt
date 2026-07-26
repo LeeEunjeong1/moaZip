@@ -7,10 +7,14 @@ import com.moazip.core.model.JoinHouseholdResult
 import com.moazip.core.presentation.mvi.MviViewModel
 import kotlinx.coroutines.launch
 import java.util.Locale
+import com.moazip.core.domain.auth.CurrentUserProvider
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class JoinWithCodeViewModel(
+@HiltViewModel
+class JoinWithCodeViewModel @Inject constructor(
     private val joinHouseholdWithInviteCodeUseCase: JoinHouseholdWithInviteCodeUseCase,
-    private val currentUserIdProvider: () -> String?,
+    private val currentUserProvider: CurrentUserProvider,
 ) : MviViewModel<JoinWithCodeIntent, JoinWithCodeState, JoinWithCodeEffect>(
     JoinWithCodeState(),
 ) {
@@ -35,7 +39,7 @@ class JoinWithCodeViewModel(
 
     private fun joinHousehold(replaceExistingHousehold: Boolean) {
         val currentState = state.value
-        val userId = currentUserIdProvider()
+        val userId = currentUserProvider.userId
         if (!currentState.canJoin && !currentState.canSwitchHousehold) return
         if (userId == null) {
             reduce { copy(errorMessage = "로그인 정보를 확인할 수 없어요. 다시 로그인해 주세요.") }

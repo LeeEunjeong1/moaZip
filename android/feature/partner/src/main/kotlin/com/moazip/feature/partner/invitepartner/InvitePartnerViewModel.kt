@@ -5,13 +5,20 @@ import com.moazip.core.presentation.mvi.MviViewModel
 import com.moazip.core.domain.usecase.ReissueInviteCodeUseCase
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import androidx.lifecycle.SavedStateHandle
+import com.moazip.core.domain.auth.CurrentUserProvider
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class InvitePartnerViewModel(
-    inviteCode: String,
+@HiltViewModel
+class InvitePartnerViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val reissueInviteCodeUseCase: ReissueInviteCodeUseCase,
-    private val currentUserIdProvider: () -> String?,
+    private val currentUserProvider: CurrentUserProvider,
 ) : MviViewModel<InvitePartnerIntent, InvitePartnerState, InvitePartnerEffect>(
-    InvitePartnerState(inviteCode = inviteCode),
+    InvitePartnerState(
+        inviteCode = savedStateHandle.get<String>(INVITE_CODE_ARGUMENT).orEmpty(),
+    ),
 ) {
     override fun onIntent(intent: InvitePartnerIntent) {
         when (intent) {
@@ -24,7 +31,7 @@ class InvitePartnerViewModel(
 
     private fun reissueCode() {
         if (state.value.isReissuing) return
-        val ownerUserId = currentUserIdProvider() ?: run {
+        val ownerUserId = currentUserProvider.userId ?: run {
             reduce { copy(reissueError = true) }
             return
         }
@@ -49,5 +56,9 @@ class InvitePartnerViewModel(
                 reduce { copy(isReissuing = false, reissueError = true) }
             }
         }
+    }
+
+    private companion object {
+        const val INVITE_CODE_ARGUMENT = "inviteCode"
     }
 }
