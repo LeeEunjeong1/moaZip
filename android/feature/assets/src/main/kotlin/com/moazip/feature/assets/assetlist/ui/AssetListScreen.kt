@@ -21,7 +21,10 @@ import com.moazip.feature.assets.assetlist.ui.component.AssetFilterRow
 import com.moazip.feature.assets.assetlist.ui.component.AssetListEmpty
 import com.moazip.feature.assets.assetlist.ui.component.AssetListHeader
 import com.moazip.feature.assets.assetlist.ui.component.AssetListItem
+import com.moazip.feature.assets.assetlist.ui.component.AssetListLoading
+import com.moazip.feature.assets.assetlist.ui.component.AssetListErrorContent
 import com.moazip.feature.assets.assetlist.ui.component.AssetSummaryCard
+import com.moazip.core.model.AssetCategory
 
 @Composable
 fun AssetListScreen(
@@ -57,7 +60,16 @@ fun AssetListScreen(
                 },
             )
         }
-        if (state.filteredAssets.isEmpty()) {
+        if (state.isLoading) {
+            item { AssetListLoading() }
+        } else if (state.error != null) {
+            item {
+                AssetListErrorContent(
+                    error = state.error,
+                    onRetry = { onIntent(AssetListIntent.RetryClicked) },
+                )
+            }
+        } else if (state.filteredAssets.isEmpty()) {
             item {
                 AssetListEmpty(
                     modifier = Modifier.padding(bottom = 28.dp),
@@ -79,43 +91,5 @@ fun AssetListScreen(
                 Column(modifier = Modifier.padding(bottom = 16.dp)) {}
             }
         }
-    }
-}
-
-@Preview(showBackground = true, widthDp = 393, heightDp = 780)
-@Composable
-private fun AssetListScreenPreview() {
-    MoaZipTheme {
-        AssetListScreen(
-            state = AssetListState(
-                assets = listOf(
-                    AssetListItemUiModel(
-                        id = "1",
-                        name = "신한은행 입출금",
-                        categoryName = "입출금",
-                        ownerName = "공동",
-                        amount = 12_500_000,
-                        kind = AssetListFilter.ASSET,
-                    ),
-                    AssetListItemUiModel(
-                        id = "2",
-                        name = "ISA 계좌",
-                        categoryName = "ISA",
-                        ownerName = "최재웅",
-                        amount = 8_300_000,
-                        kind = AssetListFilter.INVESTMENT,
-                    ),
-                    AssetListItemUiModel(
-                        id = "3",
-                        name = "전세 대출",
-                        categoryName = "대출",
-                        ownerName = "공동",
-                        amount = 50_000_000,
-                        kind = AssetListFilter.LIABILITY,
-                    ),
-                ),
-            ),
-            onIntent = {},
-        )
     }
 }

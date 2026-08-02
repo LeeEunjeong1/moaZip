@@ -1,10 +1,13 @@
 package com.moazip.feature.assets.assetlist.contract
 
+import com.moazip.core.presentation.mvi.UiState
+
 data class AssetListState(
     val selectedFilter: AssetListFilter = AssetListFilter.ALL,
     val assets: List<AssetListItemUiModel> = emptyList(),
-    val isLoading: Boolean = false,
-) {
+    val isLoading: Boolean = true,
+    val error: AssetListError? = null,
+) : UiState {
     val assetTotal: Long
         get() = assets
             .filter { it.kind == AssetListFilter.ASSET }

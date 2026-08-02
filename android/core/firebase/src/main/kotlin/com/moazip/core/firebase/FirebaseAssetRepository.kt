@@ -2,13 +2,29 @@ package com.moazip.core.firebase
 
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.DocumentSnapshot
 import com.moazip.core.domain.repository.AssetRepository
+import com.moazip.core.model.Asset
+import com.moazip.core.model.AssetCategory
+import com.moazip.core.model.AssetKind
+import com.moazip.core.model.AssetStatus
 import com.moazip.core.model.NewAsset
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 
 class FirebaseAssetRepository(
     private val firestore: FirebaseFirestore,
 ) : AssetRepository {
+    override fun observeAssets(userId: String): Flow<List<Asset>> = flow {
+        val householdId = findHouseholdId(userId)
+            ?: throw IllegalStateException("User does not belong to a household.")
+        emitAll(observeHouseholdAssets(householdId))
+    }
+
     override suspend fun addAsset(
         userId: String,
         asset: NewAsset,
@@ -64,6 +80,50 @@ class FirebaseAssetRepository(
         return membership?.getString(HOUSEHOLD_ID_FIELD)
             ?: membership?.reference?.parent?.parent?.id
     }
+
+    private fun observeHouseholdAssets(householdId: String): Flow<List<Asset>> = callbackFlow {
+        val registration = firestore
+            .collection(HOUSEHOLDS_COLLECTION)
+            .document(householdId)
+            .collection(ASSETS_COLLECTION)
+            .addSnapshotListener { snapshot, exception ->
+                if (exception != null) {
+                    close(exception)
+                    return@addSnapshotListener
+                }
+
+                val assets = snapshot
+                    ?.documents
+                    .orEmpty()
+                    .mapNotNull { document -> document.toAsset(householdId) }
+                    .sortedByDescending(Asset::updatedAtMillis)
+                trySend(assets)
+            }
+
+        awaitClose(registration::remove)
+    }
+
+    private fun DocumentSnapshot.toAsset(householdId: String): Asset? {
+        val kind = getString(KIND_FIELD)?.toEnumOrNull<AssetKind>() ?: return null
+        val category = getString(CATEGORY_FIELD)?.toEnumOrNull<AssetCategory>() ?: return null
+        val status = getString(STATUS_FIELD)?.toEnumOrNull<AssetStatus>() ?: AssetStatus.ACTIVE
+        return Asset(
+            id = getString(ID_FIELD) ?: id,
+            householdId = getString(HOUSEHOLD_ID_FIELD) ?: householdId,
+            ownerId = getString(OWNER_ID_FIELD),
+            ownerName = getString(OWNER_NAME_FIELD),
+            kind = kind,
+            category = category,
+            name = getString(NAME_FIELD).orEmpty(),
+            currentAmount = getLong(CURRENT_AMOUNT_FIELD) ?: 0L,
+            memo = getString(MEMO_FIELD).orEmpty(),
+            status = status,
+            updatedAtMillis = getTimestamp(UPDATED_AT_FIELD)?.toDate()?.time ?: 0L,
+        )
+    }
+
+    private inline fun <reified T : Enum<T>> String.toEnumOrNull(): T? =
+        enumValues<T>().firstOrNull { it.name == this }
 
     private companion object {
         const val USERS_COLLECTION = "users"

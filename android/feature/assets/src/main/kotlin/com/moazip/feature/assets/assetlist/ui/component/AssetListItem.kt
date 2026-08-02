@@ -28,6 +28,8 @@ internal fun AssetListItem(
     asset: AssetListItemUiModel,
     onClick: () -> Unit,
 ) {
+    val categoryName = stringResource(asset.category.labelRes())
+    val ownerName = asset.ownerName ?: stringResource(R.string.add_asset_owner_common)
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -44,7 +46,7 @@ internal fun AssetListItem(
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = asset.categoryName.take(1),
+                text = categoryName.take(1),
                 color = MoaZipPalette.Gray900,
                 style = MaterialTheme.typography.titleMedium,
             )
@@ -61,8 +63,8 @@ internal fun AssetListItem(
             Text(
                 text = stringResource(
                     R.string.asset_list_item_description,
-                    asset.categoryName,
-                    asset.ownerName,
+                    categoryName,
+                    ownerName,
                 ),
                 color = MoaZipPalette.Gray500,
                 style = MaterialTheme.typography.labelMedium,

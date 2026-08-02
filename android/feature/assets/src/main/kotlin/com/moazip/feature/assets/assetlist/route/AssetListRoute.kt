@@ -1,20 +1,22 @@
 package com.moazip.feature.assets.assetlist.route
 
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import com.moazip.feature.assets.assetlist.contract.AssetListIntent
-import com.moazip.feature.assets.assetlist.contract.AssetListState
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.moazip.feature.assets.assetlist.AssetListViewModel
 import com.moazip.feature.assets.assetlist.ui.AssetListScreen
 
 @Composable
 fun AssetListRoute(
     modifier: Modifier = Modifier,
-    state: AssetListState = AssetListState(),
-    onIntent: (AssetListIntent) -> Unit = {},
+    viewModel: AssetListViewModel = hiltViewModel(),
 ) {
+    val state by viewModel.state.collectAsState()
     AssetListScreen(
         state = state,
-        onIntent = onIntent,
+        onIntent = viewModel::onIntent,
         modifier = modifier,
     )
 }
