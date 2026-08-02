@@ -2,15 +2,20 @@ package com.moazip.core.model
 
 data class Asset(
     val id: String,
-    val ownerId: String,
+    val householdId: String,
+    val ownerId: String?,
+    val ownerName: String?,
     val kind: AssetKind,
     val category: AssetCategory,
-    val institution: String,
     val name: String,
     val currentAmount: Long,
     val principal: Long? = null,
+    val profit: Long? = null,
+    val returnRate: Double? = null,
     val memo: String = "",
     val status: AssetStatus = AssetStatus.ACTIVE,
+    val recordedAtMillis: Long? = null,
+    val updatedAtMillis: Long = 0L,
 )
 
 enum class AssetKind { ASSET, INVESTMENT, LIABILITY }
