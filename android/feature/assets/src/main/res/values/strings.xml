@@ -1,4 +1,16 @@
 <resources>
+    <string name="asset_list_title">자산</string>
+    <string name="asset_list_description">우리 집 자산을 한눈에 확인해 보세요.</string>
+    <string name="asset_list_net_worth">순자산</string>
+    <string name="asset_list_asset">자산</string>
+    <string name="asset_list_investment">투자</string>
+    <string name="asset_list_liability">부채</string>
+    <string name="asset_list_filter_all">전체</string>
+    <string name="asset_list_amount_won">%1$s원</string>
+    <string name="asset_list_item_description">%1$s · %2$s</string>
+    <string name="asset_list_empty_title">등록된 자산이 없어요</string>
+    <string name="asset_list_empty_description">가운데 + 버튼을 눌러\n첫 자산을 추가해 보세요.</string>
+
     <string name="add_asset_title">자산 추가</string>
     <string name="add_asset_description">새로운 자산 정보를 입력해 주세요.</string>
 

@@ -14,7 +14,7 @@ import com.moazip.app.navigation.MainScaffold
 import com.moazip.app.navigation.MainTab
 import com.moazip.app.navigation.MainTabPlaceholder
 import com.moazip.app.navigation.navigateToMainTab
-import com.moazip.feature.assets.AssetsRoute
+import com.moazip.feature.assets.assetlist.route.AssetListRoute
 import com.moazip.feature.assets.addasset.AddAssetViewModel
 import com.moazip.feature.assets.addasset.contract.AddAssetEffect
 import com.moazip.feature.assets.addasset.route.AddAssetRoute
@@ -59,7 +59,7 @@ internal fun NavGraphBuilder.mainGraph(navController: NavHostController) {
             onTabSelected = navController::navigateToMainTab,
         ) { innerPadding ->
             Box(modifier = Modifier.padding(innerPadding)) {
-                AssetsRoute()
+                AssetListRoute()
             }
         }
     }
