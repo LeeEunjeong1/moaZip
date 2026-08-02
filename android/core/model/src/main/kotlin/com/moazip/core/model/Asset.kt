@@ -9,8 +9,12 @@ data class Asset(
     val category: AssetCategory,
     val name: String,
     val currentAmount: Long,
+    val principal: Long? = null,
+    val profit: Long? = null,
+    val returnRate: Double? = null,
     val memo: String = "",
     val status: AssetStatus = AssetStatus.ACTIVE,
+    val recordedAtMillis: Long? = null,
     val updatedAtMillis: Long = 0L,
 )
 

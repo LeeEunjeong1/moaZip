@@ -35,6 +35,12 @@ class AssetListViewModel @Inject constructor(
             is AssetListIntent.FilterSelected -> reduce {
                 copy(selectedFilter = intent.filter)
             }
+            is AssetListIntent.OwnerFilterSelected -> reduce {
+                copy(selectedOwnerFilter = intent.filter)
+            }
+            is AssetListIntent.SortOptionSelected -> reduce {
+                copy(sortOption = intent.option)
+            }
             is AssetListIntent.AssetClicked -> Unit
             AssetListIntent.RetryClicked -> observeAssets()
         }
@@ -74,8 +80,12 @@ class AssetListViewModel @Inject constructor(
         id = id,
         name = name,
         category = category,
+        ownerId = ownerId,
         ownerName = ownerName,
         amount = currentAmount,
+        profit = profit,
+        returnRate = returnRate,
+        recordedAtMillis = recordedAtMillis,
         kind = when (kind) {
             AssetKind.ASSET -> AssetListFilter.ASSET
             AssetKind.INVESTMENT -> AssetListFilter.INVESTMENT

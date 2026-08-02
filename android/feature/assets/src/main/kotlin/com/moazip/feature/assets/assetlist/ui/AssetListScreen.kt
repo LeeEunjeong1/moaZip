@@ -21,8 +21,10 @@ import com.moazip.feature.assets.assetlist.ui.component.AssetFilterRow
 import com.moazip.feature.assets.assetlist.ui.component.AssetListEmpty
 import com.moazip.feature.assets.assetlist.ui.component.AssetListHeader
 import com.moazip.feature.assets.assetlist.ui.component.AssetListItem
+import com.moazip.feature.assets.assetlist.ui.component.AssetListToolbar
 import com.moazip.feature.assets.assetlist.ui.component.AssetListLoading
 import com.moazip.feature.assets.assetlist.ui.component.AssetListErrorContent
+import com.moazip.feature.assets.assetlist.ui.component.AssetOwnerFilterRow
 import com.moazip.feature.assets.assetlist.ui.component.AssetSummaryCard
 import com.moazip.core.model.AssetCategory
 
@@ -50,6 +52,7 @@ fun AssetListScreen(
                 assetTotal = state.assetTotal,
                 investmentTotal = state.investmentTotal,
                 liabilityTotal = state.liabilityTotal,
+                recordedAtMillis = state.recordedAtMillis,
             )
         }
         item {
@@ -57,6 +60,24 @@ fun AssetListScreen(
                 selectedFilter = state.selectedFilter,
                 onFilterSelected = { filter ->
                     onIntent(AssetListIntent.FilterSelected(filter))
+                },
+            )
+        }
+        item {
+            AssetOwnerFilterRow(
+                filters = state.ownerFilters,
+                selectedFilter = state.selectedOwnerFilter,
+                onFilterSelected = { filter ->
+                    onIntent(AssetListIntent.OwnerFilterSelected(filter))
+                },
+            )
+        }
+        item {
+            AssetListToolbar(
+                assetCount = state.filteredAssets.size,
+                selectedSortOption = state.sortOption,
+                onSortOptionSelected = { option ->
+                    onIntent(AssetListIntent.SortOptionSelected(option))
                 },
             )
         }

@@ -1,15 +1,20 @@
 package com.moazip.feature.assets.assetlist.ui.component
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.moazip.core.ui.theme.MoaZipPalette
@@ -22,35 +27,29 @@ internal fun AssetFilterRow(
     onFilterSelected: (AssetListFilter) -> Unit,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MoaZipPalette.Gray50, RoundedCornerShape(14.dp)),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         AssetListFilter.entries.forEach { filter ->
-            FilterChip(
-                selected = selectedFilter == filter,
-                onClick = { onFilterSelected(filter) },
-                label = {
-                    Text(
-                        text = filter.label(),
-                        style = MaterialTheme.typography.labelMedium,
-                    )
-                },
-                shape = RoundedCornerShape(12.dp),
-                border = FilterChipDefaults.filterChipBorder(
-                    enabled = true,
-                    selected = selectedFilter == filter,
-                    borderColor = MoaZipPalette.Beige200,
-                    selectedBorderColor = MoaZipPalette.Yellow500,
-                    borderWidth = 1.dp,
-                    selectedBorderWidth = 1.dp,
-                ),
-                colors = FilterChipDefaults.filterChipColors(
-                    containerColor = MoaZipPalette.White,
-                    labelColor = MoaZipPalette.Gray500,
-                    selectedContainerColor = MoaZipPalette.Yellow500,
-                    selectedLabelColor = MoaZipPalette.Gray950,
-                ),
-            )
+            val selected = selectedFilter == filter
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .heightIn(min = 40.dp)
+                    .clip(RoundedCornerShape(11.dp))
+                    .background(if (selected) MoaZipPalette.Yellow500 else MoaZipPalette.Gray50)
+                    .clickable { onFilterSelected(filter) }
+                    .padding(horizontal = 8.dp, vertical = 10.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = filter.label(),
+                    color = if (selected) MoaZipPalette.Gray950 else MoaZipPalette.Gray500,
+                    style = MaterialTheme.typography.labelMedium,
+                )
+            }
         }
     }
 }

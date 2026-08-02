@@ -116,8 +116,12 @@ class FirebaseAssetRepository(
             category = category,
             name = getString(NAME_FIELD).orEmpty(),
             currentAmount = getLong(CURRENT_AMOUNT_FIELD) ?: 0L,
+            principal = getLong(PRINCIPAL_FIELD),
+            profit = getLong(PROFIT_FIELD),
+            returnRate = getDouble(RETURN_RATE_FIELD),
             memo = getString(MEMO_FIELD).orEmpty(),
             status = status,
+            recordedAtMillis = getTimestamp(RECORDED_AT_FIELD)?.toDate()?.time,
             updatedAtMillis = getTimestamp(UPDATED_AT_FIELD)?.toDate()?.time ?: 0L,
         )
     }
@@ -139,8 +143,12 @@ class FirebaseAssetRepository(
         const val KIND_FIELD = "kind"
         const val CATEGORY_FIELD = "category"
         const val CURRENT_AMOUNT_FIELD = "currentAmount"
+        const val PRINCIPAL_FIELD = "principal"
+        const val PROFIT_FIELD = "profit"
+        const val RETURN_RATE_FIELD = "returnRate"
         const val MEMO_FIELD = "memo"
         const val STATUS_FIELD = "status"
+        const val RECORDED_AT_FIELD = "recordedAt"
         const val CREATED_BY_FIELD = "createdBy"
         const val CREATED_AT_FIELD = "createdAt"
         const val UPDATED_AT_FIELD = "updatedAt"

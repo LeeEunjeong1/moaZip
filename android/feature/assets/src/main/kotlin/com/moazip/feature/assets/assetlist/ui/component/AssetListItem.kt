@@ -45,10 +45,9 @@ internal fun AssetListItem(
                 .background(asset.kind.backgroundColor(), RoundedCornerShape(14.dp)),
             contentAlignment = Alignment.Center,
         ) {
-            Text(
-                text = categoryName.take(1),
-                color = MoaZipPalette.Gray900,
-                style = MaterialTheme.typography.titleMedium,
+            AssetCategoryIcon(
+                category = asset.category,
+                contentDescription = categoryName,
             )
         }
         Column(
@@ -70,15 +69,26 @@ internal fun AssetListItem(
                 style = MaterialTheme.typography.labelMedium,
             )
         }
-        Text(
-            text = stringResource(
-                R.string.asset_list_amount_won,
-                asset.amount.toFormattedAmount(),
-            ),
-            color = MoaZipPalette.Gray900,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Bold,
-        )
+        Column(
+            horizontalAlignment = Alignment.End,
+            verticalArrangement = Arrangement.spacedBy(3.dp),
+        ) {
+            Text(
+                text = stringResource(
+                    R.string.asset_list_amount_won,
+                    asset.amount.toFormattedAmount(),
+                ),
+                color = MoaZipPalette.Gray900,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
+            )
+            if (asset.kind == AssetListFilter.INVESTMENT && asset.returnRate != null) {
+                AssetReturnRate(
+                    profit = asset.profit,
+                    returnRate = asset.returnRate,
+                )
+            }
+        }
     }
 }
 

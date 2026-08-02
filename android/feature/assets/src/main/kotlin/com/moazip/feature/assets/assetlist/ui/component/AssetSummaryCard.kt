@@ -17,6 +17,8 @@ import androidx.compose.ui.unit.dp
 import com.moazip.core.ui.theme.MoaZipPalette
 import com.moazip.feature.assets.R
 import java.text.NumberFormat
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 @Composable
@@ -25,6 +27,7 @@ internal fun AssetSummaryCard(
     assetTotal: Long,
     investmentTotal: Long,
     liabilityTotal: Long,
+    recordedAtMillis: Long?,
 ) {
     Column(
         modifier = Modifier
@@ -48,6 +51,16 @@ internal fun AssetSummaryCard(
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
             )
+            if (recordedAtMillis != null) {
+                Text(
+                    text = stringResource(
+                        R.string.asset_list_recorded_at,
+                        recordedAtMillis.toRecordedDate(),
+                    ),
+                    color = MoaZipPalette.Gray500,
+                    style = MaterialTheme.typography.labelMedium,
+                )
+            }
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -91,3 +104,6 @@ private fun SummaryAmount(
 
 internal fun Long.toFormattedAmount(): String =
     NumberFormat.getNumberInstance(Locale.KOREA).format(this)
+
+private fun Long.toRecordedDate(): String =
+    SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(Date(this))
