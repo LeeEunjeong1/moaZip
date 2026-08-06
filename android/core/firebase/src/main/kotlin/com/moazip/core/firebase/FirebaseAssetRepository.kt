@@ -25,6 +25,15 @@ class FirebaseAssetRepository(
         emitAll(observeHouseholdAssets(householdId))
     }
 
+    override suspend fun getAsset(userId: String, assetId: String): Asset {
+        val householdId = findHouseholdId(userId)
+            ?: throw IllegalStateException("User does not belong to a household.")
+        return firestore.collection(HOUSEHOLDS_COLLECTION).document(householdId)
+            .collection(ASSETS_COLLECTION).document(assetId).get().await()
+            .toAsset(householdId)
+            ?: throw NoSuchElementException("Asset not found.")
+    }
+
     override suspend fun addAsset(
         userId: String,
         asset: NewAsset,
@@ -57,6 +66,26 @@ class FirebaseAssetRepository(
         ).await()
 
         return assetDocument.id
+    }
+
+    override suspend fun updateAsset(userId: String, assetId: String, asset: NewAsset) {
+        val householdId = findHouseholdId(userId)
+            ?: throw IllegalStateException("User does not belong to a household.")
+        firestore.collection(HOUSEHOLDS_COLLECTION).document(householdId)
+            .collection(ASSETS_COLLECTION).document(assetId)
+            .update(
+                mapOf(
+                    NAME_FIELD to asset.name.trim(),
+                    OWNER_TYPE_FIELD to if (asset.ownerUserId == null) COMMON_OWNER else MEMBER_OWNER,
+                    OWNER_ID_FIELD to asset.ownerUserId,
+                    OWNER_NAME_FIELD to asset.ownerDisplayName,
+                    KIND_FIELD to asset.kind.name,
+                    CATEGORY_FIELD to asset.category.name,
+                    CURRENT_AMOUNT_FIELD to asset.currentAmount,
+                    MEMO_FIELD to asset.memo.trim(),
+                    UPDATED_AT_FIELD to FieldValue.serverTimestamp(),
+                ),
+            ).await()
     }
 
     private suspend fun findHouseholdId(userId: String): String? {

@@ -58,4 +58,10 @@
     <string name="add_asset_error_unauthenticated">로그인 정보를 확인할 수 없어요. 다시 로그인해 주세요.</string>
     <string name="add_asset_error_member_load_failed">가구 구성원 정보를 불러오지 못했어요.</string>
     <string name="add_asset_error_save_failed">자산을 저장하지 못했어요. 잠시 후 다시 시도해 주세요.</string>
+    <string name="edit_asset_title">자산 수정</string>
+    <string name="edit_asset_description">등록된 자산 정보를 수정해 주세요.</string>
+    <string name="edit_asset_save">수정하기</string>
+    <string name="edit_asset_saving">수정 중…</string>
+    <string name="edit_asset_error_load_failed">자산 정보를 불러오지 못했어요.</string>
+    <string name="edit_asset_error_save_failed">자산을 수정하지 못했어요. 잠시 후 다시 시도해 주세요.</string>
 </resources>
