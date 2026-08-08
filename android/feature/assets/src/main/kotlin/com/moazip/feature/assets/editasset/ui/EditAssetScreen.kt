@@ -3,11 +3,15 @@ package com.moazip.feature.assets.editasset.ui
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.moazip.feature.assets.R
+import com.moazip.core.ui.theme.MoaZipPalette
 import com.moazip.feature.assets.assetform.ui.AssetFormScreen
 import com.moazip.feature.assets.editasset.contract.EditAssetError
 import com.moazip.feature.assets.editasset.contract.EditAssetIntent
@@ -40,7 +44,7 @@ fun EditAssetScreen(state: EditAssetState, onIntent: (EditAssetIntent) -> Unit, 
         submittingText = stringResource(R.string.edit_asset_saving),
         cancelText = stringResource(R.string.add_asset_cancel),
         canSubmit = state.canSave,
-        isSubmitting = state.isSaving,
+        isSubmitting = state.isSaving || state.isDeleting,
         errorMessage = state.error?.message(),
         onNameChanged = { onIntent(EditAssetIntent.NameChanged(it)) },
         onOwnerSelected = { onIntent(EditAssetIntent.OwnerSelected(it)) },
@@ -50,8 +54,35 @@ fun EditAssetScreen(state: EditAssetState, onIntent: (EditAssetIntent) -> Unit, 
         onMemoChanged = { onIntent(EditAssetIntent.MemoChanged(it)) },
         onSubmitClick = { onIntent(EditAssetIntent.SaveClicked) },
         onCancelClick = { onIntent(EditAssetIntent.CancelClicked) },
+        deleteText = if (state.isDeleting) {
+            stringResource(R.string.edit_asset_deleting)
+        } else {
+            stringResource(R.string.edit_asset_delete)
+        },
+        onDeleteClick = { onIntent(EditAssetIntent.DeleteClicked) },
         modifier = modifier,
     )
+    if (state.showDeleteConfirmation) {
+        AlertDialog(
+            onDismissRequest = { onIntent(EditAssetIntent.DeleteDismissed) },
+            containerColor = MoaZipPalette.White,
+            title = { Text(stringResource(R.string.edit_asset_delete_dialog_title)) },
+            text = { Text(stringResource(R.string.edit_asset_delete_dialog_description)) },
+            confirmButton = {
+                TextButton(onClick = { onIntent(EditAssetIntent.DeleteConfirmed) }) {
+                    Text(
+                        text = stringResource(R.string.edit_asset_delete_confirm),
+                        color = androidx.compose.material3.MaterialTheme.colorScheme.error,
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { onIntent(EditAssetIntent.DeleteDismissed) }) {
+                    Text(stringResource(R.string.edit_asset_delete_cancel))
+                }
+            },
+        )
+    }
 }
 
 @Composable
@@ -60,4 +91,5 @@ private fun EditAssetError.message() = stringResource(when (this) {
     EditAssetError.UNAUTHENTICATED -> R.string.add_asset_error_unauthenticated
     EditAssetError.LOAD_FAILED -> R.string.edit_asset_error_load_failed
     EditAssetError.SAVE_FAILED -> R.string.edit_asset_error_save_failed
+    EditAssetError.DELETE_FAILED -> R.string.edit_asset_error_delete_failed
 })

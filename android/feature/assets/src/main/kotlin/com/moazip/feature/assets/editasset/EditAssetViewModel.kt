@@ -38,7 +38,24 @@ class EditAssetViewModel @Inject constructor(
         is EditAssetIntent.AmountChanged -> reduce { copy(amount = intent.value.filter(Char::isDigit), error = null) }
         is EditAssetIntent.MemoChanged -> reduce { copy(memo = intent.value, error = null) }
         EditAssetIntent.SaveClicked -> saveAsset()
+        EditAssetIntent.DeleteClicked -> reduce { copy(showDeleteConfirmation = true, error = null) }
+        EditAssetIntent.DeleteDismissed -> reduce { copy(showDeleteConfirmation = false) }
+        EditAssetIntent.DeleteConfirmed -> deleteAsset()
         EditAssetIntent.CancelClicked -> postEffect(EditAssetEffect.NavigateBack)
+    }
+
+    private fun deleteAsset() {
+        val userId = currentUserProvider.userId
+            ?: return reduce { copy(showDeleteConfirmation = false, error = EditAssetError.UNAUTHENTICATED) }
+        viewModelScope.launch {
+            reduce { copy(showDeleteConfirmation = false, isDeleting = true, error = null) }
+            runCatching { updateAssetUseCase.delete(userId, assetId) }
+                .onSuccess {
+                    reduce { copy(isDeleting = false) }
+                    postEffect(EditAssetEffect.AssetDeleted)
+                }
+                .onFailure { reduce { copy(isDeleting = false, error = EditAssetError.DELETE_FAILED) } }
+        }
     }
 
     private fun loadAsset() {

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -24,6 +25,8 @@ internal fun AssetFormActionButtons(
     errorMessage: String?,
     onSubmitClick: () -> Unit,
     onCancelClick: () -> Unit,
+    deleteText: String? = null,
+    onDeleteClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -51,5 +54,14 @@ internal fun AssetFormActionButtons(
             onClick = onCancelClick,
             enabled = !isSubmitting,
         )
+        if (deleteText != null && onDeleteClick != null) {
+            TextButton(
+                onClick = onDeleteClick,
+                enabled = !isSubmitting,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(text = deleteText, color = MaterialTheme.colorScheme.error)
+            }
+        }
     }
 }

@@ -15,4 +15,6 @@ interface AssetRepository {
     ): String
 
     suspend fun updateAsset(userId: String, assetId: String, asset: NewAsset)
+
+    suspend fun deleteAsset(userId: String, assetId: String)
 }

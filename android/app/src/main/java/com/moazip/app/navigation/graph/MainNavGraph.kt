@@ -99,6 +99,7 @@ internal fun NavGraphBuilder.mainGraph(navController: NavHostController) {
                 when (effect) {
                     EditAssetEffect.NavigateBack,
                     EditAssetEffect.AssetUpdated,
+                    EditAssetEffect.AssetDeleted,
                     -> navController.popBackStack()
                 }
             }.launchIn(this)

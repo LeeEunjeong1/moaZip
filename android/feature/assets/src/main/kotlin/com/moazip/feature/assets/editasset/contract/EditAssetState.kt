@@ -16,9 +16,11 @@ data class EditAssetState(
     val memo: String = "",
     val isLoading: Boolean = true,
     val isSaving: Boolean = false,
+    val isDeleting: Boolean = false,
+    val showDeleteConfirmation: Boolean = false,
     val error: EditAssetError? = null,
 ) : UiState {
-    val canSave get() = !isLoading && !isSaving && name.isNotBlank() && category != null && amount.toLongOrNull() != null
+    val canSave get() = !isLoading && !isSaving && !isDeleting && name.isNotBlank() && category != null && amount.toLongOrNull() != null
     val availableCategories get() = when (assetType) {
         AssetType.ASSET -> listOf(AssetCategory.LEASE_DEPOSIT, AssetCategory.DEPOSIT, AssetCategory.SAVINGS, AssetCategory.CHECKING, AssetCategory.RETIREMENT, AssetCategory.HOUSING_SUBSCRIPTION, AssetCategory.OTHER)
         AssetType.INVESTMENT -> listOf(AssetCategory.ISA, AssetCategory.OVERSEAS_STOCK, AssetCategory.DOMESTIC_STOCK, AssetCategory.OTHER)

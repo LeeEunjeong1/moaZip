@@ -56,6 +56,8 @@ fun AssetFormScreen(
     onMemoChanged: (String) -> Unit,
     onSubmitClick: () -> Unit,
     onCancelClick: () -> Unit,
+    deleteText: String? = null,
+    onDeleteClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -114,6 +116,8 @@ fun AssetFormScreen(
             errorMessage = errorMessage,
             onSubmitClick = onSubmitClick,
             onCancelClick = onCancelClick,
+            deleteText = deleteText,
+            onDeleteClick = onDeleteClick,
         )
     }
 }

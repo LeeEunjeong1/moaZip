@@ -88,6 +88,15 @@ class FirebaseAssetRepository(
             ).await()
     }
 
+    override suspend fun deleteAsset(userId: String, assetId: String) {
+        val householdId = findHouseholdId(userId)
+            ?: throw IllegalStateException("User does not belong to a household.")
+        firestore.collection(HOUSEHOLDS_COLLECTION).document(householdId)
+            .collection(ASSETS_COLLECTION).document(assetId)
+            .delete()
+            .await()
+    }
+
     private suspend fun findHouseholdId(userId: String): String? {
         val savedHouseholdId = firestore
             .collection(USERS_COLLECTION)

@@ -13,5 +13,8 @@ sealed interface EditAssetIntent : UiIntent {
     data class AmountChanged(val value: String) : EditAssetIntent
     data class MemoChanged(val value: String) : EditAssetIntent
     data object SaveClicked : EditAssetIntent
+    data object DeleteClicked : EditAssetIntent
+    data object DeleteDismissed : EditAssetIntent
+    data object DeleteConfirmed : EditAssetIntent
     data object CancelClicked : EditAssetIntent
 }
