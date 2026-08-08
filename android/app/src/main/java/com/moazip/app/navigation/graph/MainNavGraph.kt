@@ -15,6 +15,9 @@ import com.moazip.app.navigation.MainTab
 import com.moazip.app.navigation.MainTabPlaceholder
 import com.moazip.app.navigation.navigateToMainTab
 import com.moazip.feature.assets.assetlist.route.AssetListRoute
+import com.moazip.feature.assets.editasset.EditAssetViewModel
+import com.moazip.feature.assets.editasset.contract.EditAssetEffect
+import com.moazip.feature.assets.editasset.route.EditAssetRoute
 import com.moazip.feature.assets.addasset.AddAssetViewModel
 import com.moazip.feature.assets.addasset.contract.AddAssetEffect
 import com.moazip.feature.assets.addasset.route.AddAssetRoute
@@ -59,7 +62,7 @@ internal fun NavGraphBuilder.mainGraph(navController: NavHostController) {
             onTabSelected = navController::navigateToMainTab,
         ) { innerPadding ->
             Box(modifier = Modifier.padding(innerPadding)) {
-                AssetListRoute()
+                AssetListRoute(onEditAsset = { navController.navigate(AppRoute.editAsset(it)) })
             }
         }
     }
@@ -87,6 +90,21 @@ internal fun NavGraphBuilder.mainGraph(navController: NavHostController) {
                 modifier = Modifier.padding(innerPadding),
             )
         }
+    }
+
+    composable(AppRoute.EditAssetPattern) {
+        val viewModel: EditAssetViewModel = hiltViewModel()
+        LaunchedEffect(viewModel) {
+            viewModel.effect.onEach { effect ->
+                when (effect) {
+                    EditAssetEffect.NavigateBack,
+                    EditAssetEffect.AssetUpdated,
+                    EditAssetEffect.AssetDeleted,
+                    -> navController.popBackStack()
+                }
+            }.launchIn(this)
+        }
+        EditAssetRoute(viewModel = viewModel)
     }
 
     placeholderTab(

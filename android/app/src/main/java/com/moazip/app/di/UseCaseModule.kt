@@ -7,11 +7,13 @@ import com.moazip.core.domain.usecase.AddAssetUseCase
 import com.moazip.core.domain.usecase.CreateHouseholdUseCase
 import com.moazip.core.domain.usecase.GetLatestInviteCodeUseCase
 import com.moazip.core.domain.usecase.GetHouseholdMembersUseCase
+import com.moazip.core.domain.usecase.GetAssetUseCase
 import com.moazip.core.domain.usecase.HasJoinedHouseholdUseCase
 import com.moazip.core.domain.usecase.JoinHouseholdWithInviteCodeUseCase
 import com.moazip.core.domain.usecase.ObserveDashboardSummary
 import com.moazip.core.domain.usecase.ObserveAssetsUseCase
 import com.moazip.core.domain.usecase.ReissueInviteCodeUseCase
+import com.moazip.core.domain.usecase.UpdateAssetUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -51,6 +53,12 @@ object UseCaseModule {
     @Provides
     fun provideObserveAssetsUseCase(repository: AssetRepository) =
         ObserveAssetsUseCase(repository)
+
+    @Provides
+    fun provideGetAssetUseCase(repository: AssetRepository) = GetAssetUseCase(repository)
+
+    @Provides
+    fun provideUpdateAssetUseCase(repository: AssetRepository) = UpdateAssetUseCase(repository)
 
     @Provides
     fun provideObserveDashboardSummary(repository: DashboardRepository) =

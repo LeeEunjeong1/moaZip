@@ -41,7 +41,9 @@ class AssetListViewModel @Inject constructor(
             is AssetListIntent.SortOptionSelected -> reduce {
                 copy(sortOption = intent.option)
             }
-            is AssetListIntent.AssetClicked -> Unit
+            is AssetListIntent.AssetClicked -> postEffect(
+                AssetListEffect.NavigateToEditAsset(intent.assetId),
+            )
             AssetListIntent.RetryClicked -> observeAssets()
         }
     }

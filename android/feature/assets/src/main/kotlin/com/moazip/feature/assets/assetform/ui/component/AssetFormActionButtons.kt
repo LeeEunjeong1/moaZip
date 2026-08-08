@@ -1,28 +1,32 @@
-package com.moazip.feature.assets.addasset.ui.component
+package com.moazip.feature.assets.assetform.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.Composable
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.moazip.core.ui.component.MoaZipButton
 import com.moazip.core.ui.component.MoaZipOutlinedButton
 import com.moazip.core.ui.theme.MoaZipPalette
-import com.moazip.feature.assets.R
 
 @Composable
-fun AddAssetActionButtons(
-    canSave: Boolean,
-    isSaving: Boolean,
+internal fun AssetFormActionButtons(
+    submitText: String,
+    submittingText: String,
+    cancelText: String,
+    canSubmit: Boolean,
+    isSubmitting: Boolean,
     errorMessage: String?,
-    onSaveClick: () -> Unit,
+    onSubmitClick: () -> Unit,
     onCancelClick: () -> Unit,
+    deleteText: String? = null,
+    onDeleteClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -41,16 +45,23 @@ fun AddAssetActionButtons(
             )
         }
         MoaZipButton(
-            text = stringResource(
-                if (isSaving) R.string.add_asset_saving else R.string.add_asset_save,
-            ),
-            onClick = onSaveClick,
-            enabled = canSave,
+            text = if (isSubmitting) submittingText else submitText,
+            onClick = onSubmitClick,
+            enabled = canSubmit,
         )
         MoaZipOutlinedButton(
-            text = stringResource(R.string.add_asset_cancel),
+            text = cancelText,
             onClick = onCancelClick,
-            enabled = !isSaving,
+            enabled = !isSubmitting,
         )
+        if (deleteText != null && onDeleteClick != null) {
+            TextButton(
+                onClick = onDeleteClick,
+                enabled = !isSubmitting,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(text = deleteText, color = MaterialTheme.colorScheme.error)
+            }
+        }
     }
 }
