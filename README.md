@@ -4,6 +4,20 @@ moaZip은 부부나 가족이 함께 우리 집 자산을 관리하고, 자산�
 
 매일 지출을 입력하는 가계부보다는 예금, 투자, 보증금, 부채 등 흩어진 자산을 한곳에 모으고 주기적으로 기록하여 우리 집의 순자산이 어떻게 달라지는지 확인하는 데 초점을 맞추고 있습니다.
 
+## 앱 화면
+
+<p align="center">
+  <img src="docs/screenshots/home-redacted.png" width="250" alt="moaZip 홈 화면">
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/assets-redacted.png" width="250" alt="moaZip 자산 목록 화면">
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/records-redacted.png" width="250" alt="moaZip 자산 기록 화면">
+</p>
+
+<p align="center">
+  홈에서 순자산 변화를 확인하고, 자산 탭에서 우리 집 자산을 관리하며, 기록 탭에서 기간별 증감 내역을 확인할 수 있습니다.
+</p>
+
 ## 주요 기능
 
 - Google 계정을 이용한 로그인 및 자동 로그인
