@@ -37,9 +37,6 @@ internal fun NavGraphBuilder.mainGraph(navController: NavHostController) {
                         DashboardEffect.NavigateToAssets -> {
                             navController.navigateToMainTab(MainTab.Assets)
                         }
-                        is DashboardEffect.NavigateToPartnerInvite -> {
-                            navController.navigate(AppRoute.invitePartner(effect.inviteCode))
-                        }
                         is DashboardEffect.ShowMessage -> Unit
                     }
                 }

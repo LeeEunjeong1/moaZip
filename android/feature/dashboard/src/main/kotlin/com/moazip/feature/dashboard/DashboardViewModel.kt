@@ -2,8 +2,8 @@ package com.moazip.feature.dashboard
 
 import com.moazip.feature.dashboard.contract.*
 import androidx.lifecycle.viewModelScope
-import com.moazip.core.domain.usecase.GetLatestInviteCodeUseCase
 import com.moazip.core.domain.usecase.ObserveDashboardSummary
+import com.moazip.core.domain.usecase.ObserveAssetSnapshotsUseCase
 import com.moazip.core.presentation.mvi.MviViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
@@ -16,36 +16,36 @@ import javax.inject.Inject
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
     private val observeDashboardSummary: ObserveDashboardSummary,
-    private val getLatestInviteCodeUseCase: GetLatestInviteCodeUseCase,
+    private val observeAssetSnapshotsUseCase: ObserveAssetSnapshotsUseCase,
     private val currentUserProvider: CurrentUserProvider,
 ) : MviViewModel<DashboardIntent, DashboardState, DashboardEffect>(DashboardState()) {
     private var observeJob: Job? = null
+    private var observeSnapshotsJob: Job? = null
 
     init {
         observeSummary()
+        observeLatestSnapshot()
     }
 
     override fun onIntent(intent: DashboardIntent) {
         when (intent) {
-            DashboardIntent.Refresh -> observeSummary()
+            DashboardIntent.Refresh -> {
+                observeSummary()
+                observeLatestSnapshot()
+            }
             DashboardIntent.OpenAssets -> postEffect(DashboardEffect.NavigateToAssets)
-            DashboardIntent.OpenPartnerInvite -> openPartnerInvite()
         }
     }
 
-    private fun openPartnerInvite() {
-        if (state.value.isInviteLoading) return
+    private fun observeLatestSnapshot() {
+        observeSnapshotsJob?.cancel()
         val userId = currentUserProvider.userId ?: return
-        viewModelScope.launch {
-            reduce { copy(isInviteLoading = true) }
-            runCatching { getLatestInviteCodeUseCase(userId) }
-                .onSuccess { inviteCode ->
-                    reduce { copy(isInviteLoading = false) }
-                    if (inviteCode != null) {
-                        postEffect(DashboardEffect.NavigateToPartnerInvite(inviteCode))
-                    }
+        observeSnapshotsJob = viewModelScope.launch {
+            observeAssetSnapshotsUseCase(userId)
+                .catch { /* Current asset summary can still be displayed. */ }
+                .collect { snapshots ->
+                    reduce { copy(latestSnapshot = snapshots.maxByOrNull { it.monthKey }) }
                 }
-                .onFailure { reduce { copy(isInviteLoading = false) } }
         }
     }
 
