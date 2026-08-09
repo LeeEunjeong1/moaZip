@@ -7,8 +7,16 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AccountBalanceWallet
+import androidx.compose.material.icons.outlined.History
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +41,7 @@ internal fun MainScaffold(
             Box(
                 modifier = Modifier
                     .background(MoaZipPalette.Cream50)
+                    .navigationBarsPadding()
                     .padding(horizontal = 24.dp, vertical = 10.dp),
                 contentAlignment = Alignment.Center,
             ) {
@@ -88,11 +97,24 @@ private fun RowScope.MainNavigationItem(
     selectedTab: MainTab,
     onTabSelected: (MainTab) -> Unit,
 ) {
+    val label = stringResource(labelRes)
     MoaZipBottomBarItem(
         selected = selectedTab == tab,
-        label = stringResource(labelRes),
+        label = label,
         onClick = { onTabSelected(tab) },
-    )
+    ) {
+        Icon(
+            imageVector = when (tab) {
+                MainTab.Home -> Icons.Outlined.Home
+                MainTab.Assets -> Icons.Outlined.AccountBalanceWallet
+                MainTab.Records -> Icons.Outlined.History
+                MainTab.Settings -> Icons.Outlined.Settings
+                MainTab.Add -> error("Add tab uses its prominent navigation item.")
+            },
+            contentDescription = label,
+            modifier = Modifier.size(22.dp),
+        )
+    }
 }
 
 @Composable

@@ -74,6 +74,7 @@ fun RowScope.MoaZipBottomBarItem(
             .weight(1f)
             .height(50.dp),
         color = androidx.compose.ui.graphics.Color.Transparent,
+        contentColor = iconColor,
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -82,7 +83,13 @@ fun RowScope.MoaZipBottomBarItem(
             Box(
                 modifier = Modifier
                     .size(iconSize)
-                    .background(iconColor, RoundedCornerShape(50)),
+                    .then(
+                        if (prominent) {
+                            Modifier.background(iconColor, RoundedCornerShape(50))
+                        } else {
+                            Modifier
+                        },
+                    ),
                 contentAlignment = Alignment.Center,
             ) {
                 iconContent()

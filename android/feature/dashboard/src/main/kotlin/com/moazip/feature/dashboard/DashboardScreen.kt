@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import com.moazip.core.ui.component.MoaZipButton
 import com.moazip.core.ui.component.MoaZipCard
 import java.text.NumberFormat
@@ -66,8 +67,12 @@ fun DashboardScreen(
         LatestAssetRecordCard(snapshot = state.latestSnapshot)
 
         MoaZipButton(
-            text = "자산 목록 보기",
+            text = stringResource(R.string.dashboard_open_assets),
             onClick = { onIntent(DashboardIntent.OpenAssets) },
+        )
+        MoaZipButton(
+            text = stringResource(R.string.dashboard_open_records),
+            onClick = { onIntent(DashboardIntent.OpenRecords) },
         )
     }
 }

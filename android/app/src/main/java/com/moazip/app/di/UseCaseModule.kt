@@ -7,6 +7,7 @@ import com.moazip.core.domain.usecase.AddAssetUseCase
 import com.moazip.core.domain.usecase.CreateHouseholdUseCase
 import com.moazip.core.domain.usecase.GetLatestInviteCodeUseCase
 import com.moazip.core.domain.usecase.GetHouseholdMembersUseCase
+import com.moazip.core.domain.usecase.GetHouseholdDetailsUseCase
 import com.moazip.core.domain.usecase.GetAssetUseCase
 import com.moazip.core.domain.usecase.HasJoinedHouseholdUseCase
 import com.moazip.core.domain.usecase.JoinHouseholdWithInviteCodeUseCase
@@ -16,6 +17,8 @@ import com.moazip.core.domain.usecase.ObserveAssetSnapshotsUseCase
 import com.moazip.core.domain.usecase.RecordMonthlyAssetSnapshotUseCase
 import com.moazip.core.domain.usecase.ReissueInviteCodeUseCase
 import com.moazip.core.domain.usecase.UpdateAssetUseCase
+import com.moazip.core.domain.usecase.SignOutUseCase
+import com.moazip.core.domain.repository.AuthRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -47,6 +50,13 @@ object UseCaseModule {
     @Provides
     fun provideGetHouseholdMembersUseCase(repository: HouseholdRepository) =
         GetHouseholdMembersUseCase(repository)
+
+    @Provides
+    fun provideGetHouseholdDetailsUseCase(repository: HouseholdRepository) =
+        GetHouseholdDetailsUseCase(repository)
+
+    @Provides
+    fun provideSignOutUseCase(repository: AuthRepository) = SignOutUseCase(repository)
 
     @Provides
     fun provideAddAssetUseCase(repository: AssetRepository) =

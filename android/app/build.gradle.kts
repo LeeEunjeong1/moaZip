@@ -48,6 +48,7 @@ dependencies {
     implementation(project(":feature:partner"))
     implementation(project(":feature:assets"))
     implementation(project(":feature:records"))
+    implementation(project(":feature:settings"))
     implementation(project(":feature:recurring"))
     implementation(project(":feature:import"))
 
@@ -58,6 +59,7 @@ dependencies {
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
