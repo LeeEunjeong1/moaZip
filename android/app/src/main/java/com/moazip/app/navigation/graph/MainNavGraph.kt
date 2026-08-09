@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.imePadding
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -31,6 +32,7 @@ import kotlinx.coroutines.flow.onEach
 
 internal fun NavGraphBuilder.mainGraph(navController: NavHostController) {
     composable(AppRoute.Dashboard) {
+        BackHandler { /* Keep the app open while the home tab is selected. */ }
         val viewModel: DashboardViewModel = hiltViewModel()
         LaunchedEffect(viewModel) {
             viewModel.effect
