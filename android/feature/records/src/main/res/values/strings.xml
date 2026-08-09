@@ -2,6 +2,7 @@
     <string name="asset_records_title">분기 기록</string>
     <string name="asset_records_description">분기별 자산 변화를 한눈에 확인해요.</string>
     <string name="asset_records_growth_rate">지난 기록 대비 %1$s%%</string>
+    <string name="asset_records_growth_amount_rate">지난 기록 대비 %1$s (%2$s%%)</string>
     <string name="asset_records_no_previous_record">비교할 이전 기록이 없어요.</string>
     <string name="asset_records_snapshot_list_title">기록 내역</string>
     <string name="asset_records_net_worth">순자산</string>

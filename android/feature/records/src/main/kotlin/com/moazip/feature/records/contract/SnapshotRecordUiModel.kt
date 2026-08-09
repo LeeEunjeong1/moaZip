@@ -8,4 +8,6 @@ data class SnapshotRecordUiModel(
     val depositTotal: Long,
     val liabilityTotal: Long,
     val growthRate: Double? = null,
+    val growthAmount: Long? = null,
+    val liabilityChange: Long? = null,
 )
