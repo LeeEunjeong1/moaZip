@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +34,7 @@ internal fun MainScaffold(
             Box(
                 modifier = Modifier
                     .background(MoaZipPalette.Cream50)
+                    .navigationBarsPadding()
                     .padding(horizontal = 24.dp, vertical = 10.dp),
                 contentAlignment = Alignment.Center,
             ) {

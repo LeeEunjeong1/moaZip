@@ -2,6 +2,8 @@ package com.moazip.app.navigation.graph
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -101,7 +103,10 @@ internal fun NavGraphBuilder.mainGraph(navController: NavHostController) {
                 }
             }.launchIn(this)
         }
-        EditAssetRoute(viewModel = viewModel)
+        EditAssetRoute(
+            viewModel = viewModel,
+            modifier = Modifier.safeDrawingPadding().imePadding(),
+        )
     }
 
     composable(AppRoute.Records) {
