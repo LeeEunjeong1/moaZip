@@ -1,0 +1,8 @@
+<resources>
+    <string name="asset_records_title">분기 기록</string>
+    <string name="asset_records_description">현재 자산 상태를 스냅샷으로 저장해요.</string>
+    <string name="asset_records_difference">직전 분기 대비 %1$s</string>
+    <string name="asset_records_financial_assets">금융자산</string>
+    <string name="asset_records_deposit">보증금</string>
+    <string name="asset_records_liability">부채</string>
+</resources>

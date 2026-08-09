@@ -24,6 +24,7 @@ import com.moazip.feature.assets.addasset.route.AddAssetRoute
 import com.moazip.feature.dashboard.DashboardRoute
 import com.moazip.feature.dashboard.DashboardViewModel
 import com.moazip.feature.dashboard.contract.DashboardEffect
+import com.moazip.feature.records.route.AssetRecordsRoute
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -104,12 +105,14 @@ internal fun NavGraphBuilder.mainGraph(navController: NavHostController) {
         EditAssetRoute(viewModel = viewModel)
     }
 
-    placeholderTab(
-        route = AppRoute.Records,
-        tab = MainTab.Records,
-        titleRes = R.string.records_title,
-        navController = navController,
-    )
+    composable(AppRoute.Records) {
+        MainScaffold(
+            selectedTab = MainTab.Records,
+            onTabSelected = navController::navigateToMainTab,
+        ) { innerPadding ->
+            AssetRecordsRoute(modifier = Modifier.padding(innerPadding))
+        }
+    }
     placeholderTab(
         route = AppRoute.Settings,
         tab = MainTab.Settings,
