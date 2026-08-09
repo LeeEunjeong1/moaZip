@@ -8,11 +8,9 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.moazip.app.R
 import com.moazip.app.navigation.AppRoute
 import com.moazip.app.navigation.MainScaffold
 import com.moazip.app.navigation.MainTab
-import com.moazip.app.navigation.MainTabPlaceholder
 import com.moazip.app.navigation.navigateToMainTab
 import com.moazip.feature.assets.assetlist.route.AssetListRoute
 import com.moazip.feature.assets.editasset.EditAssetViewModel
@@ -25,6 +23,7 @@ import com.moazip.feature.dashboard.DashboardRoute
 import com.moazip.feature.dashboard.DashboardViewModel
 import com.moazip.feature.dashboard.contract.DashboardEffect
 import com.moazip.feature.records.route.AssetRecordsRoute
+import com.moazip.feature.settings.route.SettingsRoute
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -113,29 +112,12 @@ internal fun NavGraphBuilder.mainGraph(navController: NavHostController) {
             AssetRecordsRoute(modifier = Modifier.padding(innerPadding))
         }
     }
-    placeholderTab(
-        route = AppRoute.Settings,
-        tab = MainTab.Settings,
-        titleRes = R.string.settings_title,
-        navController = navController,
-    )
-}
-
-private fun NavGraphBuilder.placeholderTab(
-    route: String,
-    tab: MainTab,
-    titleRes: Int,
-    navController: NavHostController,
-) {
-    composable(route) {
+    composable(AppRoute.Settings) {
         MainScaffold(
-            selectedTab = tab,
+            selectedTab = MainTab.Settings,
             onTabSelected = navController::navigateToMainTab,
         ) { innerPadding ->
-            MainTabPlaceholder(
-                titleRes = titleRes,
-                modifier = Modifier.padding(innerPadding),
-            )
+            SettingsRoute(modifier = Modifier.padding(innerPadding))
         }
     }
 }

@@ -1,0 +1,13 @@
+<resources>
+    <string name="settings_title">설정</string>
+    <string name="settings_description">우리 집 정보와 멤버를 관리해요.</string>
+    <string name="settings_home_label">우리 집</string>
+    <string name="settings_members_title">멤버</string>
+    <string name="settings_role_owner">OWNER</string>
+    <string name="settings_role_member">MEMBER</string>
+    <string name="settings_reissue_invite_code">초대 코드 다시 만들기</string>
+    <string name="settings_logout">로그아웃</string>
+    <string name="settings_sample_household_name">은정 &amp; 재웅의 집</string>
+    <string name="settings_sample_owner_name">은정</string>
+    <string name="settings_sample_member_name">재웅</string>
+</resources>
