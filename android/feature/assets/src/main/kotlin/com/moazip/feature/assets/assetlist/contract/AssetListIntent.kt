@@ -7,5 +7,8 @@ sealed interface AssetListIntent : UiIntent {
     data class OwnerFilterSelected(val filter: AssetOwnerFilter) : AssetListIntent
     data class SortOptionSelected(val option: AssetSortOption) : AssetListIntent
     data class AssetClicked(val assetId: String) : AssetListIntent
+    data object RecordSnapshotClicked : AssetListIntent
+    data object RecordSnapshotDismissed : AssetListIntent
+    data object RecordSnapshotConfirmed : AssetListIntent
     data object RetryClicked : AssetListIntent
 }

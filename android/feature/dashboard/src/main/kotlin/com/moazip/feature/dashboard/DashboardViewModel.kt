@@ -51,8 +51,15 @@ class DashboardViewModel @Inject constructor(
 
     private fun observeSummary() {
         observeJob?.cancel()
+        val userId = currentUserProvider.userId
+        if (userId == null) {
+            reduce {
+                copy(isLoading = false, errorMessage = "로그인 정보를 확인할 수 없어요.")
+            }
+            return
+        }
         observeJob = viewModelScope.launch {
-            observeDashboardSummary()
+            observeDashboardSummary(userId)
                 .onStart { reduce { copy(isLoading = true, errorMessage = null) } }
                 .catch { error ->
                     val message = error.message ?: "자산 정보를 불러오지 못했어요."

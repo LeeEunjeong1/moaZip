@@ -2,6 +2,7 @@ package com.moazip.feature.assets.assetlist.contract
 
 import com.moazip.core.model.AssetCategory
 import com.moazip.core.presentation.mvi.UiState
+import java.time.YearMonth
 
 data class AssetListState(
     val selectedFilter: AssetListFilter = AssetListFilter.ALL,
@@ -10,7 +11,13 @@ data class AssetListState(
     val assets: List<AssetListItemUiModel> = emptyList(),
     val isLoading: Boolean = true,
     val error: AssetListError? = null,
+    val recordedMonthKeys: Set<String> = emptySet(),
+    val isRecordingSnapshot: Boolean = false,
+    val showRecordConfirmation: Boolean = false,
+    val snapshotRecordFailed: Boolean = false,
 ) : UiState {
+    val isCurrentMonthRecorded: Boolean
+        get() = YearMonth.now().toString() in recordedMonthKeys
     val assetTotal: Long
         get() = assets
             .filter { it.kind == AssetListFilter.ASSET }

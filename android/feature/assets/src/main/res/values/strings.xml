@@ -21,6 +21,18 @@
     <string name="asset_list_error_unauthenticated">로그인 정보를 확인할 수 없어요.</string>
     <string name="asset_list_error_load_failed">자산 목록을 불러오지 못했어요.\n잠시 후 다시 시도해 주세요.</string>
     <string name="asset_list_retry">다시 시도</string>
+    <string name="asset_snapshot_record_title">이번 달 자산을 기록해 보세요</string>
+    <string name="asset_snapshot_recorded_title">이번 달 기록 완료</string>
+    <string name="asset_snapshot_record_description">현재 자산 상태가 홈과 기록 그래프에 반영돼요.</string>
+    <string name="asset_snapshot_record_button">현재 자산 기록하기</string>
+    <string name="asset_snapshot_record_again">다시 기록하기</string>
+    <string name="asset_snapshot_recording">기록 중…</string>
+    <string name="asset_snapshot_dialog_title">현재 자산을 기록할까요?</string>
+    <string name="asset_snapshot_dialog_description">이번 달 자산 합계를 새로운 기록으로 저장해요.</string>
+    <string name="asset_snapshot_dialog_overwrite">이번 달 기록이 있어요. 현재 금액으로 갱신할까요?</string>
+    <string name="asset_snapshot_dialog_confirm">기록하기</string>
+    <string name="asset_snapshot_dialog_cancel">취소</string>
+    <string name="asset_snapshot_error_record_failed">자산 기록을 저장하지 못했어요. 잠시 후 다시 시도해 주세요.</string>
 
     <string name="add_asset_title">자산 추가</string>
     <string name="add_asset_description">새로운 자산 정보를 입력해 주세요.</string>

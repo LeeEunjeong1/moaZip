@@ -8,7 +8,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.moazip.core.ui.theme.MoaZipPalette
@@ -26,6 +30,8 @@ import com.moazip.feature.assets.assetlist.ui.component.AssetListLoading
 import com.moazip.feature.assets.assetlist.ui.component.AssetListErrorContent
 import com.moazip.feature.assets.assetlist.ui.component.AssetOwnerFilterRow
 import com.moazip.feature.assets.assetlist.ui.component.AssetSummaryCard
+import com.moazip.feature.assets.assetlist.ui.component.AssetSnapshotRecordCard
+import com.moazip.feature.assets.R
 import com.moazip.core.model.AssetCategory
 
 @Composable
@@ -53,6 +59,14 @@ fun AssetListScreen(
                 investmentTotal = state.investmentTotal,
                 liabilityTotal = state.liabilityTotal,
                 recordedAtMillis = state.recordedAtMillis,
+            )
+        }
+        item {
+            AssetSnapshotRecordCard(
+                isRecorded = state.isCurrentMonthRecorded,
+                isRecording = state.isRecordingSnapshot,
+                showError = state.snapshotRecordFailed,
+                onRecordClick = { onIntent(AssetListIntent.RecordSnapshotClicked) },
             )
         }
         item {
@@ -112,5 +126,30 @@ fun AssetListScreen(
                 Column(modifier = Modifier.padding(bottom = 16.dp)) {}
             }
         }
+    }
+    if (state.showRecordConfirmation) {
+        AlertDialog(
+            onDismissRequest = { onIntent(AssetListIntent.RecordSnapshotDismissed) },
+            containerColor = MoaZipPalette.White,
+            title = { Text(stringResource(R.string.asset_snapshot_dialog_title)) },
+            text = {
+                Text(
+                    stringResource(
+                        if (state.isCurrentMonthRecorded) R.string.asset_snapshot_dialog_overwrite
+                        else R.string.asset_snapshot_dialog_description,
+                    ),
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = { onIntent(AssetListIntent.RecordSnapshotConfirmed) }) {
+                    Text(stringResource(R.string.asset_snapshot_dialog_confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { onIntent(AssetListIntent.RecordSnapshotDismissed) }) {
+                    Text(stringResource(R.string.asset_snapshot_dialog_cancel))
+                }
+            },
+        )
     }
 }

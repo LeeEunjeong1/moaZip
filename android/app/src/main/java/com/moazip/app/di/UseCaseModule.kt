@@ -1,7 +1,7 @@
 package com.moazip.app.di
 
 import com.moazip.core.domain.repository.AssetRepository
-import com.moazip.core.domain.repository.DashboardRepository
+import com.moazip.core.domain.repository.AssetSnapshotRepository
 import com.moazip.core.domain.repository.HouseholdRepository
 import com.moazip.core.domain.usecase.AddAssetUseCase
 import com.moazip.core.domain.usecase.CreateHouseholdUseCase
@@ -12,6 +12,8 @@ import com.moazip.core.domain.usecase.HasJoinedHouseholdUseCase
 import com.moazip.core.domain.usecase.JoinHouseholdWithInviteCodeUseCase
 import com.moazip.core.domain.usecase.ObserveDashboardSummary
 import com.moazip.core.domain.usecase.ObserveAssetsUseCase
+import com.moazip.core.domain.usecase.ObserveAssetSnapshotsUseCase
+import com.moazip.core.domain.usecase.RecordMonthlyAssetSnapshotUseCase
 import com.moazip.core.domain.usecase.ReissueInviteCodeUseCase
 import com.moazip.core.domain.usecase.UpdateAssetUseCase
 import dagger.Module
@@ -61,6 +63,16 @@ object UseCaseModule {
     fun provideUpdateAssetUseCase(repository: AssetRepository) = UpdateAssetUseCase(repository)
 
     @Provides
-    fun provideObserveDashboardSummary(repository: DashboardRepository) =
+    fun provideObserveDashboardSummary(repository: AssetRepository) =
         ObserveDashboardSummary(repository)
+
+    @Provides
+    fun provideObserveAssetSnapshotsUseCase(repository: AssetSnapshotRepository) =
+        ObserveAssetSnapshotsUseCase(repository)
+
+    @Provides
+    fun provideRecordMonthlyAssetSnapshotUseCase(
+        assetRepository: AssetRepository,
+        snapshotRepository: AssetSnapshotRepository,
+    ) = RecordMonthlyAssetSnapshotUseCase(assetRepository, snapshotRepository)
 }

@@ -61,11 +61,8 @@ fun DashboardScreen(
     ) {
         Text("우리 집 자산", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
         Text("순자산 ${state.summary.netWorth.asWon()}", style = MaterialTheme.typography.headlineSmall)
-        Text("지난 분기보다 ${state.summary.quarterlyGrowthRate}% 성장했어요")
-
-        SummaryCard("금융 자산", state.summary.financialAssets.asWon())
-        SummaryCard("투자 손익", state.summary.investmentProfitLoss.asWon())
-        SummaryCard("월 저축액", state.summary.monthlySavings.asWon())
+        SummaryCard("총자산", state.summary.assetTotal.asWon())
+        SummaryCard("부채", state.summary.liabilityTotal.asWon())
 
         MoaZipButton(
             text = "자산 목록 보기",
