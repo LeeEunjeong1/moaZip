@@ -7,11 +7,11 @@ moaZip은 부부나 가족이 함께 우리 집 자산을 관리하고, 자산�
 ## 앱 화면
 
 <p align="center">
-  <img src="docs/screenshots/home-redacted.png" width="170" alt="moaZip 홈 화면">
-  <img src="docs/screenshots/assets-redacted.png" width="170" alt="moaZip 자산 목록 화면">
-  <img src="docs/screenshots/add-asset-redacted.png" width="170" alt="moaZip 자산 추가 화면">
-  <img src="docs/screenshots/records-redacted.png" width="170" alt="moaZip 자산 기록 화면">
-  <img src="docs/screenshots/settings-redacted.png" width="170" alt="moaZip 설정 화면">
+  <img src="docs/screenshots/home-redacted.png" width="140" alt="moaZip 홈 화면">
+  <img src="docs/screenshots/assets-redacted.png" width="140" alt="moaZip 자산 목록 화면">
+  <img src="docs/screenshots/add-asset-redacted.png" width="140" alt="moaZip 자산 추가 화면">
+  <img src="docs/screenshots/records-redacted.png" width="140" alt="moaZip 자산 기록 화면">
+  <img src="docs/screenshots/settings-redacted.png" width="140" alt="moaZip 설정 화면">
 </p>
 
 <p align="center">
