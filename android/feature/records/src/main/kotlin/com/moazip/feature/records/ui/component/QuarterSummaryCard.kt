@@ -12,12 +12,13 @@ import com.moazip.core.ui.component.MoaZipCard
 import com.moazip.core.ui.theme.MoaZipPalette
 import com.moazip.feature.records.ui.format.toKoreanAmount
 import com.moazip.feature.records.R
+import java.util.Locale
 
 @Composable
 internal fun QuarterSummaryCard(
     quarter: String,
     netWorth: Long,
-    difference: Long,
+    growthRate: Double?,
 ) {
     MoaZipCard {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -34,13 +35,19 @@ internal fun QuarterSummaryCard(
                 color = MoaZipPalette.Gray900,
             )
             Text(
-                text = stringResource(
-                    R.string.asset_records_difference,
-                    "${if (difference >= 0) "+" else ""}${difference.toKoreanAmount()}",
-                ),
+                text = growthRate?.let {
+                    stringResource(
+                        R.string.asset_records_growth_rate,
+                        String.format(Locale.KOREA, "%+.1f", it),
+                    )
+                } ?: stringResource(R.string.asset_records_no_previous_record),
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.SemiBold,
-                color = if (difference >= 0) MoaZipPalette.Green600 else MaterialTheme.colorScheme.error,
+                color = when {
+                    growthRate == null -> MoaZipPalette.Gray500
+                    growthRate >= 0 -> MoaZipPalette.Green600
+                    else -> MaterialTheme.colorScheme.error
+                },
             )
         }
     }

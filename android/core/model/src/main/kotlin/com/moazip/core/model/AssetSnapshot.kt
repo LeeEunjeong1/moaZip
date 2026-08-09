@@ -6,6 +6,8 @@ data class AssetSnapshot(
     val assetTotal: Long,
     val investmentTotal: Long,
     val liabilityTotal: Long,
+    val financialAssetTotal: Long = assetTotal + investmentTotal,
+    val depositTotal: Long = 0L,
     val recordedAtMillis: Long,
 ) {
     val netWorth: Long

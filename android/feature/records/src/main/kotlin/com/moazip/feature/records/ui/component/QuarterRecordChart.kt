@@ -15,21 +15,38 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.font.FontWeight
 import com.moazip.core.ui.theme.MoaZipPalette
 import com.moazip.feature.records.contract.QuarterRecordUiModel
+import java.util.Locale
 
 @Composable
 internal fun QuarterRecordChart(records: List<QuarterRecordUiModel>) {
     val maxValue = records.maxOfOrNull { it.netWorth }?.coerceAtLeast(1L) ?: 1L
-    Row(modifier = Modifier.fillMaxWidth().height(112.dp)) {
+    Row(modifier = Modifier.fillMaxWidth().height(132.dp)) {
         records.forEachIndexed { index, record ->
-            val barHeight = (22f + 52f * record.netWorth / maxValue).dp
+            val barHeight = (22f + 52f * record.netWorth.coerceAtLeast(0L) / maxValue).dp
             val selected = index == records.lastIndex
             Column(
-                modifier = Modifier.weight(1f).height(112.dp),
+                modifier = Modifier.weight(1f).height(132.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Spacer(modifier = Modifier.weight(1f))
+                record.growthRate?.let { growthRate ->
+                    Text(
+                        text = String.format(Locale.KOREA, "%+.1f%%", growthRate),
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.SemiBold,
+                        color = when {
+                            growthRate > 0 -> MoaZipPalette.Green600
+                            growthRate < 0 -> MaterialTheme.colorScheme.error
+                            else -> MoaZipPalette.Gray500
+                        },
+                        textAlign = TextAlign.Center,
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                }
                 Box(
                     modifier = Modifier
                         .width(8.dp)
@@ -44,6 +61,7 @@ internal fun QuarterRecordChart(records: List<QuarterRecordUiModel>) {
                     text = record.label,
                     style = MaterialTheme.typography.labelSmall,
                     color = MoaZipPalette.Gray500,
+                    textAlign = TextAlign.Center,
                 )
             }
         }

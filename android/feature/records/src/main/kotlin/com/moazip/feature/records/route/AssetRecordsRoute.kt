@@ -14,5 +14,5 @@ fun AssetRecordsRoute(
     viewModel: AssetRecordsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
-    AssetRecordsScreen(state = state, modifier = modifier)
+    AssetRecordsScreen(state = state, onIntent = viewModel::onIntent, modifier = modifier)
 }

@@ -33,6 +33,10 @@ class FirebaseAssetSnapshotRepository(
                             assetTotal = document.getLong("assetTotal") ?: 0L,
                             investmentTotal = document.getLong("investmentTotal") ?: 0L,
                             liabilityTotal = document.getLong("liabilityTotal") ?: 0L,
+                            financialAssetTotal = document.getLong("financialAssetTotal")
+                                ?: ((document.getLong("assetTotal") ?: 0L) +
+                                    (document.getLong("investmentTotal") ?: 0L)),
+                            depositTotal = document.getLong("depositTotal") ?: 0L,
                             recordedAtMillis = document.getTimestamp("recordedAt")?.toDate()?.time ?: 0L,
                         )
                     }.sortedBy { it.monthKey })
@@ -54,6 +58,8 @@ class FirebaseAssetSnapshotRepository(
                     "assetTotal" to snapshot.assetTotal,
                     "investmentTotal" to snapshot.investmentTotal,
                     "liabilityTotal" to snapshot.liabilityTotal,
+                    "financialAssetTotal" to snapshot.financialAssetTotal,
+                    "depositTotal" to snapshot.depositTotal,
                     "netWorth" to snapshot.netWorth,
                     "recordedBy" to userId,
                     "recordedAt" to FieldValue.serverTimestamp(),

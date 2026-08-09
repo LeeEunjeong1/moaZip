@@ -1,8 +1,16 @@
 <resources>
     <string name="asset_records_title">분기 기록</string>
-    <string name="asset_records_description">현재 자산 상태를 스냅샷으로 저장해요.</string>
-    <string name="asset_records_difference">직전 분기 대비 %1$s</string>
+    <string name="asset_records_description">분기별 자산 변화를 한눈에 확인해요.</string>
+    <string name="asset_records_growth_rate">지난 기록 대비 %1$s%%</string>
+    <string name="asset_records_no_previous_record">비교할 이전 기록이 없어요.</string>
+    <string name="asset_records_snapshot_list_title">기록 내역</string>
+    <string name="asset_records_net_worth">순자산</string>
     <string name="asset_records_financial_assets">금융자산</string>
     <string name="asset_records_deposit">보증금</string>
     <string name="asset_records_liability">부채</string>
+    <string name="asset_records_empty_title">아직 자산 기록이 없어요</string>
+    <string name="asset_records_empty_description">자산 목록에서 현재 자산을 기록하면\n분기별 변화를 확인할 수 있어요.</string>
+    <string name="asset_records_error_unauthenticated">로그인 정보를 확인할 수 없어요.</string>
+    <string name="asset_records_error_load_failed">자산 기록을 불러오지 못했어요.</string>
+    <string name="asset_records_retry">다시 시도</string>
 </resources>
