@@ -39,6 +39,9 @@ internal fun NavGraphBuilder.mainGraph(navController: NavHostController) {
                         DashboardEffect.NavigateToAssets -> {
                             navController.navigateToMainTab(MainTab.Assets)
                         }
+                        DashboardEffect.NavigateToRecords -> {
+                            navController.navigateToMainTab(MainTab.Records)
+                        }
                         is DashboardEffect.ShowMessage -> Unit
                     }
                 }
@@ -80,15 +83,10 @@ internal fun NavGraphBuilder.mainGraph(navController: NavHostController) {
                 }
                 .launchIn(this)
         }
-        MainScaffold(
-            selectedTab = MainTab.Add,
-            onTabSelected = navController::navigateToMainTab,
-        ) { innerPadding ->
-            AddAssetRoute(
-                viewModel = viewModel,
-                modifier = Modifier.padding(innerPadding),
-            )
-        }
+        AddAssetRoute(
+            viewModel = viewModel,
+            modifier = Modifier.safeDrawingPadding().imePadding(),
+        )
     }
 
     composable(AppRoute.EditAssetPattern) {

@@ -34,6 +34,7 @@ class DashboardViewModel @Inject constructor(
                 observeLatestSnapshot()
             }
             DashboardIntent.OpenAssets -> postEffect(DashboardEffect.NavigateToAssets)
+            DashboardIntent.OpenRecords -> postEffect(DashboardEffect.NavigateToRecords)
         }
     }
 
