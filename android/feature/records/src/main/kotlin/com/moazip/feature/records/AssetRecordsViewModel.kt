@@ -60,7 +60,6 @@ class AssetRecordsViewModel @Inject constructor(
             .toSortedMap()
             .entries
             .toList()
-            .takeLast(5)
         val latest = records.lastOrNull()
         val chronologicalSnapshots = sortedBy { it.monthKey }
         val previousSnapshot = chronologicalSnapshots.dropLast(1).lastOrNull()
@@ -111,7 +110,7 @@ class AssetRecordsViewModel @Inject constructor(
         if (recordedAtMillis <= 0L) return monthKey.replace("-", ".")
         return Instant.ofEpochMilli(recordedAtMillis)
             .atZone(ZoneId.systemDefault())
-            .format(DateTimeFormatter.ofPattern("yy.MM\ndd", Locale.KOREA))
+            .format(DateTimeFormatter.ofPattern("yy.MM", Locale.KOREA))
     }
 
     private fun List<AssetSnapshot>.toSnapshotRecords(): List<SnapshotRecordUiModel> =

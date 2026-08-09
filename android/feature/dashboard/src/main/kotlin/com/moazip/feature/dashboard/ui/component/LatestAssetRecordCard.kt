@@ -48,10 +48,6 @@ fun LatestAssetRecordCard(
                         fontWeight = FontWeight.SemiBold,
                     )
                 }
-                Text(
-                    text = stringResource(R.string.dashboard_latest_record_month, snapshot.monthKey),
-                    style = MaterialTheme.typography.bodySmall,
-                )
             }
         }
     }
