@@ -9,4 +9,5 @@ data class DashboardState(
     val summary: DashboardSummary = DashboardSummary(),
     val errorMessage: String? = null,
     val latestSnapshot: AssetSnapshot? = null,
+    val assetTrend: List<DashboardAssetTrendPoint> = emptyList(),
 ) : UiState
