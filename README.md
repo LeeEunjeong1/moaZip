@@ -7,15 +7,15 @@ moaZip은 부부나 가족이 함께 우리 집 자산을 관리하고, 자산�
 ## 앱 화면
 
 <p align="center">
-  <img src="docs/screenshots/home-redacted.png" width="250" alt="moaZip 홈 화면">
-  &nbsp;&nbsp;
-  <img src="docs/screenshots/assets-redacted.png" width="250" alt="moaZip 자산 목록 화면">
-  &nbsp;&nbsp;
-  <img src="docs/screenshots/records-redacted.png" width="250" alt="moaZip 자산 기록 화면">
+  <img src="docs/screenshots/home-redacted.png" width="170" alt="moaZip 홈 화면">
+  <img src="docs/screenshots/assets-redacted.png" width="170" alt="moaZip 자산 목록 화면">
+  <img src="docs/screenshots/add-asset-redacted.png" width="170" alt="moaZip 자산 추가 화면">
+  <img src="docs/screenshots/records-redacted.png" width="170" alt="moaZip 자산 기록 화면">
+  <img src="docs/screenshots/settings-redacted.png" width="170" alt="moaZip 설정 화면">
 </p>
 
 <p align="center">
-  홈에서 순자산 변화를 확인하고, 자산 탭에서 우리 집 자산을 관리하며, 기록 탭에서 기간별 증감 내역을 확인할 수 있습니다.
+  홈에서 순자산 변화를 확인하고, 자산을 구성원별로 관리하며, 기록과 설정에서 기간별 증감 및 우리 집 정보를 확인할 수 있습니다.
 </p>
 
 ## 주요 기능
