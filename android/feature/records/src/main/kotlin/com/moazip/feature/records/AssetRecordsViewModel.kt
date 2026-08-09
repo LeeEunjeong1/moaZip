@@ -60,7 +60,6 @@ class AssetRecordsViewModel @Inject constructor(
             .toSortedMap()
             .entries
             .toList()
-            .takeLast(5)
         val latest = records.lastOrNull()
         val chronologicalSnapshots = sortedBy { it.monthKey }
         val previousSnapshot = chronologicalSnapshots.dropLast(1).lastOrNull()
@@ -111,13 +110,17 @@ class AssetRecordsViewModel @Inject constructor(
         if (recordedAtMillis <= 0L) return monthKey.replace("-", ".")
         return Instant.ofEpochMilli(recordedAtMillis)
             .atZone(ZoneId.systemDefault())
-            .format(DateTimeFormatter.ofPattern("yy.MM\ndd", Locale.KOREA))
+            .format(DateTimeFormatter.ofPattern("yy.MM", Locale.KOREA))
     }
 
-    private fun List<AssetSnapshot>.toSnapshotRecords(): List<SnapshotRecordUiModel> =
-        sortedWith(compareBy<AssetSnapshot> { it.recordedAtMillis }.thenBy { it.monthKey })
+    private fun List<AssetSnapshot>.toSnapshotRecords(): List<SnapshotRecordUiModel> {
+        val sortedSnapshots = sortedWith(
+            compareBy<AssetSnapshot> { it.recordedAtMillis }.thenBy { it.monthKey },
+        )
+        return sortedSnapshots
             .mapIndexed { index, snapshot ->
-                val previousNetWorth = getOrNull(index - 1)?.netWorth
+                val previousSnapshot = sortedSnapshots.getOrNull(index - 1)
+                val previousNetWorth = previousSnapshot?.netWorth
                 SnapshotRecordUiModel(
                     id = snapshot.id,
                     recordedDate = snapshot.toFullRecordedDate(),
@@ -125,6 +128,9 @@ class AssetRecordsViewModel @Inject constructor(
                     financialAssetTotal = snapshot.financialAssetTotal,
                     depositTotal = snapshot.depositTotal,
                     liabilityTotal = snapshot.liabilityTotal,
+                    liabilityChange = previousSnapshot
+                        ?.let { snapshot.liabilityTotal - it.liabilityTotal },
+                    growthAmount = previousNetWorth?.let { snapshot.netWorth - it },
                     growthRate = previousNetWorth
                         ?.takeIf { it != 0L }
                         ?.let {
@@ -134,6 +140,7 @@ class AssetRecordsViewModel @Inject constructor(
                 )
             }
             .asReversed()
+    }
 
     private fun AssetSnapshot.toFullRecordedDate(): String {
         if (recordedAtMillis <= 0L) return monthKey.replace("-", ".")

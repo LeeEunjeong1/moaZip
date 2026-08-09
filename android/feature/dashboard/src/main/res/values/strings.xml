@@ -4,4 +4,7 @@
     <string name="dashboard_latest_record_month">%1$s 월간 기록</string>
     <string name="dashboard_open_assets">자산 목록 보기</string>
     <string name="dashboard_open_records">자산 기록 보기</string>
+    <string name="dashboard_asset_trend_title">순자산 변동</string>
+    <string name="dashboard_asset_trend_forecast">다음 달 예상 순자산 %1$s</string>
+    <string name="dashboard_asset_trend_notice">최근 월평균 변화 추세를 바탕으로 계산한 예상값이에요.</string>
 </resources>

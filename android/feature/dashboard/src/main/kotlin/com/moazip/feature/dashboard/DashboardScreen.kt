@@ -23,6 +23,7 @@ import com.moazip.core.ui.component.MoaZipCard
 import java.text.NumberFormat
 import java.util.Locale
 import com.moazip.feature.dashboard.ui.component.LatestAssetRecordCard
+import com.moazip.feature.dashboard.ui.component.AssetTrendCard
 
 @Composable
 fun DashboardRoute(
@@ -61,19 +62,8 @@ fun DashboardScreen(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Text("우리 집 자산", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
-        Text("순자산 ${state.summary.netWorth.asWon()}", style = MaterialTheme.typography.headlineSmall)
-        SummaryCard("총자산", state.summary.assetTotal.asWon())
-        SummaryCard("부채", state.summary.liabilityTotal.asWon())
         LatestAssetRecordCard(snapshot = state.latestSnapshot)
-
-        MoaZipButton(
-            text = stringResource(R.string.dashboard_open_assets),
-            onClick = { onIntent(DashboardIntent.OpenAssets) },
-        )
-        MoaZipButton(
-            text = stringResource(R.string.dashboard_open_records),
-            onClick = { onIntent(DashboardIntent.OpenRecords) },
-        )
+        AssetTrendCard(points = state.assetTrend)
     }
 }
 

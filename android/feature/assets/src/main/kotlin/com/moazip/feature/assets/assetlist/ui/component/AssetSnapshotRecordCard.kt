@@ -36,7 +36,7 @@ internal fun AssetSnapshotRecordCard(
     onRecordClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var isCollapsed by rememberSaveable { mutableStateOf(false) }
+    var isCollapsed by rememberSaveable { mutableStateOf(true) }
 
     if (isRecorded && isCollapsed) {
         Surface(

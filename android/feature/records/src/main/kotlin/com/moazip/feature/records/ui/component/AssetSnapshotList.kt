@@ -1,15 +1,18 @@
 package com.moazip.feature.records.ui.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -43,8 +46,14 @@ internal fun AssetSnapshotList(records: List<SnapshotRecordUiModel>) {
                     )
                     Text(
                         text = record.growthRate?.let { growthRate ->
+                            val growthAmount = record.growthAmount ?: 0L
+                            val signedAmount = buildString {
+                                if (growthAmount > 0) append('+')
+                                append(growthAmount.toKoreanAmount())
+                            }
                             stringResource(
-                                R.string.asset_records_growth_rate,
+                                R.string.asset_records_growth_amount_rate,
+                                signedAmount,
                                 String.format(Locale.KOREA, "%+.1f", growthRate),
                             )
                         } ?: stringResource(R.string.asset_records_no_previous_record),
@@ -73,6 +82,11 @@ internal fun AssetSnapshotList(records: List<SnapshotRecordUiModel>) {
                         label = stringResource(R.string.asset_records_liability),
                         amount = -record.liabilityTotal,
                         isLiability = true,
+                        highlightColor = when {
+                            record.liabilityChange == null || record.liabilityChange == 0L -> null
+                            record.liabilityChange > 0L -> MaterialTheme.colorScheme.errorContainer
+                            else -> MoaZipPalette.Green600.copy(alpha = 0.14f)
+                        },
                     )
                 }
                 if (index != records.lastIndex) {
@@ -88,6 +102,7 @@ private fun RecordDetailRow(
     label: String,
     amount: Long,
     isLiability: Boolean = false,
+    highlightColor: Color? = null,
 ) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         Text(
@@ -100,6 +115,13 @@ private fun RecordDetailRow(
             style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.SemiBold,
             color = if (isLiability) MaterialTheme.colorScheme.error else MoaZipPalette.Gray900,
+            modifier = if (highlightColor != null) {
+                Modifier
+                    .background(highlightColor, RoundedCornerShape(4.dp))
+                    .padding(horizontal = 5.dp, vertical = 2.dp)
+            } else {
+                Modifier
+            },
         )
     }
 }
