@@ -47,6 +47,7 @@ dependencies {
     implementation(project(":feature:auth"))
     implementation(project(":feature:partner"))
     implementation(project(":feature:assets"))
+    implementation(project(":feature:records"))
     implementation(project(":feature:recurring"))
     implementation(project(":feature:import"))
 

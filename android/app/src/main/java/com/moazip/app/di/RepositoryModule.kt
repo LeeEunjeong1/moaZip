@@ -2,14 +2,14 @@ package com.moazip.app.di
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.moazip.core.data.InMemoryDashboardRepository
 import com.moazip.core.domain.auth.CurrentUserProvider
 import com.moazip.core.domain.repository.AssetRepository
+import com.moazip.core.domain.repository.AssetSnapshotRepository
 import com.moazip.core.domain.repository.AuthRepository
-import com.moazip.core.domain.repository.DashboardRepository
 import com.moazip.core.domain.repository.HouseholdRepository
 import com.moazip.core.domain.repository.UserRepository
 import com.moazip.core.firebase.FirebaseAssetRepository
+import com.moazip.core.firebase.FirebaseAssetSnapshotRepository
 import com.moazip.core.firebase.FirebaseAuthRepository
 import com.moazip.core.firebase.FirebaseCurrentUserProvider
 import com.moazip.core.firebase.FirebaseHouseholdRepository
@@ -52,5 +52,6 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideDashboardRepository(): DashboardRepository = InMemoryDashboardRepository()
+    fun provideAssetSnapshotRepository(firestore: FirebaseFirestore): AssetSnapshotRepository =
+        FirebaseAssetSnapshotRepository(firestore)
 }

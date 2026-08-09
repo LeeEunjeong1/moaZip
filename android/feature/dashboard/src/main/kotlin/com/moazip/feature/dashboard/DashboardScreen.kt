@@ -19,9 +19,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.moazip.core.ui.component.MoaZipButton
 import com.moazip.core.ui.component.MoaZipCard
-import com.moazip.core.ui.component.MoaZipOutlinedButton
 import java.text.NumberFormat
 import java.util.Locale
+import com.moazip.feature.dashboard.ui.component.LatestAssetRecordCard
 
 @Composable
 fun DashboardRoute(
@@ -61,20 +61,13 @@ fun DashboardScreen(
     ) {
         Text("우리 집 자산", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
         Text("순자산 ${state.summary.netWorth.asWon()}", style = MaterialTheme.typography.headlineSmall)
-        Text("지난 분기보다 ${state.summary.quarterlyGrowthRate}% 성장했어요")
-
-        SummaryCard("금융 자산", state.summary.financialAssets.asWon())
-        SummaryCard("투자 손익", state.summary.investmentProfitLoss.asWon())
-        SummaryCard("월 저축액", state.summary.monthlySavings.asWon())
+        SummaryCard("총자산", state.summary.assetTotal.asWon())
+        SummaryCard("부채", state.summary.liabilityTotal.asWon())
+        LatestAssetRecordCard(snapshot = state.latestSnapshot)
 
         MoaZipButton(
             text = "자산 목록 보기",
             onClick = { onIntent(DashboardIntent.OpenAssets) },
-        )
-        MoaZipOutlinedButton(
-            text = if (state.isInviteLoading) "초대 코드 불러오는 중..." else "파트너 초대하기",
-            onClick = { onIntent(DashboardIntent.OpenPartnerInvite) },
-            enabled = !state.isInviteLoading,
         )
     }
 }
