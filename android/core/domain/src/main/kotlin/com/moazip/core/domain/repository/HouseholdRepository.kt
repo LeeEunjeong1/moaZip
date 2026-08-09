@@ -2,6 +2,7 @@ package com.moazip.core.domain.repository
 
 import com.moazip.core.model.HouseholdCreationResult
 import com.moazip.core.model.HouseholdMember
+import com.moazip.core.model.HouseholdDetails
 import com.moazip.core.model.JoinHouseholdResult
 
 interface HouseholdRepository {
@@ -13,6 +14,8 @@ interface HouseholdRepository {
     suspend fun hasJoinedHousehold(userId: String): Boolean
 
     suspend fun getHouseholdMembers(userId: String): List<HouseholdMember>
+
+    suspend fun getHouseholdDetails(userId: String): HouseholdDetails
 
     suspend fun reissueInviteCode(
         ownerUserId: String,

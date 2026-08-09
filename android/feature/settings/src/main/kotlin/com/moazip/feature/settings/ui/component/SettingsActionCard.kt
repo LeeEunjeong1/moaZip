@@ -18,15 +18,32 @@ import com.moazip.feature.settings.R
 
 @Composable
 internal fun SettingsActionCard(
+    inviteCode: String?,
+    canReissueInviteCode: Boolean,
+    isReissuingInviteCode: Boolean,
+    reissueFailed: Boolean,
     onReissueInviteCode: () -> Unit,
     onLogout: () -> Unit,
 ) {
     MoaZipCard {
         Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            SettingsActionItem(
-                text = stringResource(R.string.settings_reissue_invite_code),
-                onClick = onReissueInviteCode,
-            )
+            if (canReissueInviteCode) {
+                SettingsActionItem(
+                    text = if (isReissuingInviteCode) {
+                        stringResource(R.string.settings_reissuing_invite_code)
+                    } else {
+                        stringResource(R.string.settings_reissue_invite_code)
+                    },
+                    supportingText = when {
+                        reissueFailed -> stringResource(R.string.settings_reissue_failed)
+                        inviteCode != null -> stringResource(R.string.settings_current_invite_code, inviteCode)
+                        else -> null
+                    },
+                    supportingTextIsError = reissueFailed,
+                    onClick = onReissueInviteCode,
+                    enabled = !isReissuingInviteCode,
+                )
+            }
             SettingsActionItem(
                 text = stringResource(R.string.settings_logout),
                 color = MaterialTheme.colorScheme.error,
@@ -40,16 +57,30 @@ internal fun SettingsActionCard(
 private fun SettingsActionItem(
     text: String,
     onClick: () -> Unit,
+    supportingText: String? = null,
+    supportingTextIsError: Boolean = false,
+    enabled: Boolean = true,
     color: androidx.compose.ui.graphics.Color = MoaZipPalette.Gray900,
 ) {
-    Text(
-        text = text,
-        style = MaterialTheme.typography.bodyLarge,
-        fontWeight = FontWeight.Medium,
-        color = color,
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable(enabled = enabled, onClick = onClick)
             .padding(vertical = 14.dp),
-    )
+        verticalArrangement = Arrangement.spacedBy(3.dp),
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Medium,
+            color = color,
+        )
+        supportingText?.let {
+            Text(
+                text = it,
+                style = MaterialTheme.typography.bodySmall,
+                color = if (supportingTextIsError) MaterialTheme.colorScheme.error else MoaZipPalette.Gray500,
+            )
+        }
+    }
 }

@@ -117,7 +117,14 @@ internal fun NavGraphBuilder.mainGraph(navController: NavHostController) {
             selectedTab = MainTab.Settings,
             onTabSelected = navController::navigateToMainTab,
         ) { innerPadding ->
-            SettingsRoute(modifier = Modifier.padding(innerPadding))
+            SettingsRoute(
+                onLoggedOut = {
+                    navController.navigate(AppRoute.Login) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                },
+                modifier = Modifier.padding(innerPadding),
+            )
         }
     }
 }

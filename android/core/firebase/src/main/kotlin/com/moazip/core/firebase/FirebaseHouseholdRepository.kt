@@ -7,6 +7,8 @@ import com.google.firebase.firestore.SetOptions
 import com.moazip.core.domain.repository.HouseholdRepository
 import com.moazip.core.model.HouseholdCreationResult
 import com.moazip.core.model.HouseholdMember
+import com.moazip.core.model.HouseholdDetails
+import com.moazip.core.model.HouseholdMemberRole
 import com.moazip.core.model.JoinHouseholdResult
 import kotlinx.coroutines.tasks.await
 import java.util.Locale
@@ -290,9 +292,33 @@ class FirebaseHouseholdRepository(
                     ?: userSnapshot.getString(EMAIL_FIELD)
                         ?.trim()
                         ?.takeIf(String::isNotEmpty),
+                role = memberSnapshot.getString(ROLE_FIELD).toMemberRole(),
             )
         }
     }
+
+    override suspend fun getHouseholdDetails(userId: String): HouseholdDetails {
+        val householdId = findHouseholdId(userId)
+            ?: throw IllegalStateException("User does not belong to a household.")
+        val householdSnapshot = firestore
+            .collection(HOUSEHOLDS_COLLECTION)
+            .document(householdId)
+            .get()
+            .await()
+        check(householdSnapshot.exists()) { "Household does not exist." }
+
+        return HouseholdDetails(
+            id = householdId,
+            name = householdSnapshot.getString(NAME_FIELD).orEmpty(),
+            inviteCode = householdSnapshot.getString(INVITE_CODE_FIELD),
+            members = getHouseholdMembers(userId)
+                .sortedWith(compareBy<HouseholdMember> { it.role != HouseholdMemberRole.OWNER }
+                    .thenBy { it.displayName.orEmpty() }),
+        )
+    }
+
+    private fun String?.toMemberRole(): HouseholdMemberRole =
+        if (this == OWNER_ROLE) HouseholdMemberRole.OWNER else HouseholdMemberRole.MEMBER
 
     private suspend fun findHouseholdId(userId: String): String? {
         val savedHouseholdId = firestore

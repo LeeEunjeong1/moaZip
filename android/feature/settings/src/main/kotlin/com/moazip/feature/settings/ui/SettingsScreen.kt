@@ -20,6 +20,9 @@ import com.moazip.feature.settings.ui.component.SettingsActionCard
 import com.moazip.feature.settings.ui.component.SettingsHeader
 import com.moazip.feature.settings.ui.component.SettingsHomeCard
 import com.moazip.feature.settings.ui.component.SettingsMemberCard
+import com.moazip.feature.settings.ui.component.SettingsLoading
+import com.moazip.feature.settings.ui.component.SettingsErrorContent
+import com.moazip.feature.settings.contract.SettingsError
 
 @Composable
 fun SettingsScreen(
@@ -36,13 +39,30 @@ fun SettingsScreen(
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         item { SettingsHeader() }
-        item { SettingsHomeCard(householdName = state.householdName) }
-        item { SettingsMemberCard(members = state.members) }
-        item {
-            SettingsActionCard(
-                onReissueInviteCode = { onIntent(SettingsIntent.ReissueInviteCodeClicked) },
-                onLogout = { onIntent(SettingsIntent.LogoutClicked) },
-            )
+        when {
+            state.isLoading -> item { SettingsLoading() }
+            state.error == SettingsError.UNAUTHENTICATED || state.error == SettingsError.LOAD_FAILED -> {
+                item {
+                    SettingsErrorContent(
+                        error = checkNotNull(state.error),
+                        onRetry = { onIntent(SettingsIntent.RetryClicked) },
+                    )
+                }
+            }
+            else -> {
+                item { SettingsHomeCard(householdName = state.householdName) }
+                item { SettingsMemberCard(members = state.members) }
+                item {
+                    SettingsActionCard(
+                        inviteCode = state.inviteCode,
+                        canReissueInviteCode = state.canReissueInviteCode,
+                        isReissuingInviteCode = state.isReissuingInviteCode,
+                        reissueFailed = state.error == SettingsError.REISSUE_FAILED,
+                        onReissueInviteCode = { onIntent(SettingsIntent.ReissueInviteCodeClicked) },
+                        onLogout = { onIntent(SettingsIntent.LogoutClicked) },
+                    )
+                }
+            }
         }
     }
 }
@@ -58,6 +78,9 @@ private fun SettingsScreenPreview() {
                     SettingsMemberUiModel("1", "은정", SettingsMemberRole.OWNER),
                     SettingsMemberUiModel("2", "재웅", SettingsMemberRole.MEMBER),
                 ),
+                inviteCode = "MZ-V89D",
+                canReissueInviteCode = true,
+                isLoading = false,
             ),
             onIntent = {},
         )
