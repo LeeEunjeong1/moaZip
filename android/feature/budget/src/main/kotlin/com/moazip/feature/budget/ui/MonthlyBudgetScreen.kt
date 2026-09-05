@@ -44,6 +44,9 @@ fun MonthlyBudgetScreen(
             )
         }
         item { BudgetSummaryCard(state) }
+        state.errorMessage?.let { message ->
+            item { Text(message, color = MaterialTheme.colorScheme.error) }
+        }
         items(state.members, key = MemberBudgetUiModel::name) { MemberBudgetCard(it) }
         item { JointSavingCard(state.jointSavings) }
         item { MoaZipButton(text = "계획 수정하기", onClick = onEditClick) }

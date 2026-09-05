@@ -19,6 +19,9 @@ import com.moazip.core.domain.usecase.ReissueInviteCodeUseCase
 import com.moazip.core.domain.usecase.UpdateAssetUseCase
 import com.moazip.core.domain.usecase.SignOutUseCase
 import com.moazip.core.domain.repository.AuthRepository
+import com.moazip.core.domain.repository.BudgetRepository
+import com.moazip.core.domain.usecase.ObserveMonthlyBudgetUseCase
+import com.moazip.core.domain.usecase.SaveMonthlyBudgetUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -85,4 +88,12 @@ object UseCaseModule {
         assetRepository: AssetRepository,
         snapshotRepository: AssetSnapshotRepository,
     ) = RecordMonthlyAssetSnapshotUseCase(assetRepository, snapshotRepository)
+
+    @Provides
+    fun provideObserveMonthlyBudgetUseCase(repository: BudgetRepository) =
+        ObserveMonthlyBudgetUseCase(repository)
+
+    @Provides
+    fun provideSaveMonthlyBudgetUseCase(repository: BudgetRepository) =
+        SaveMonthlyBudgetUseCase(repository)
 }

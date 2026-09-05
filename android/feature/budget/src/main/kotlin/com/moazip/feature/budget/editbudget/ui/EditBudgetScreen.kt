@@ -56,6 +56,9 @@ fun EditBudgetScreen(
                     Text("월급 ${state.totalIncome.asWon()} · 배분 ${state.totalAllocation.asWon()}")
                 }
             }
+            state.errorMessage?.let { message ->
+                item { Text(message, color = MaterialTheme.colorScheme.error) }
+            }
             itemsIndexed(state.members, key = { _, member -> member.name }) { memberIndex, member ->
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Text("${member.name} 예산", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
@@ -94,7 +97,12 @@ fun EditBudgetScreen(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             MoaZipOutlinedButton("취소", onBack, Modifier.weight(1f))
-            MoaZipButton("저장하기", onSave, Modifier.weight(1f))
+            MoaZipButton(
+                text = if (state.isSaving) "저장 중..." else "저장하기",
+                onClick = onSave,
+                modifier = Modifier.weight(1f),
+                enabled = !state.isSaving,
+            )
         }
     }
 }
