@@ -7,7 +7,7 @@ and feature-based multi-module boundaries.
 
 ```text
 app
- ├─ feature:dashboard / assets / recurring / import
+ ├─ feature:dashboard / assets / budget / import
  ├─ core:data
  ├─ core:presentation
  └─ core:ui

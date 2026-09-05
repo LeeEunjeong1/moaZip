@@ -14,6 +14,7 @@ internal object AppRoute {
     const val EditAssetPattern = "$EditAsset/{$AssetIdArgument}"
     const val Records = "records"
     const val Settings = "settings"
+    const val MonthlyBudget = "monthly_budget"
 
     const val InvitePartnerPattern = "$InvitePartner/{$InviteCodeArgument}"
 

@@ -27,6 +27,7 @@ import com.moazip.feature.dashboard.DashboardViewModel
 import com.moazip.feature.dashboard.contract.DashboardEffect
 import com.moazip.feature.records.route.AssetRecordsRoute
 import com.moazip.feature.settings.route.SettingsRoute
+import com.moazip.feature.budget.route.MonthlyBudgetRoute
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -43,6 +44,9 @@ internal fun NavGraphBuilder.mainGraph(navController: NavHostController) {
                         }
                         DashboardEffect.NavigateToRecords -> {
                             navController.navigateToMainTab(MainTab.Records)
+                        }
+                        DashboardEffect.NavigateToMonthlyBudget -> {
+                            navController.navigate(AppRoute.MonthlyBudget)
                         }
                         is DashboardEffect.ShowMessage -> Unit
                     }
@@ -131,5 +135,8 @@ internal fun NavGraphBuilder.mainGraph(navController: NavHostController) {
                 modifier = Modifier.padding(innerPadding),
             )
         }
+    }
+    composable(AppRoute.MonthlyBudget) {
+        MonthlyBudgetRoute(modifier = Modifier.safeDrawingPadding())
     }
 }
