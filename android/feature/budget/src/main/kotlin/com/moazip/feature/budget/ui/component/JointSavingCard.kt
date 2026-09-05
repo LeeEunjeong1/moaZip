@@ -10,10 +10,10 @@ import com.moazip.core.ui.component.MoaZipCard
 import com.moazip.feature.budget.contract.BudgetAllocationUiModel
 
 @Composable
-internal fun JointSavingCard(items: List<BudgetAllocationUiModel>) {
+internal fun JointSavingCard(title: String, items: List<BudgetAllocationUiModel>) {
     MoaZipCard {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text("공동 자금", style = MaterialTheme.typography.titleMedium)
+            Text(title, style = MaterialTheme.typography.titleMedium)
             items.forEach { BudgetRow(it) }
         }
     }

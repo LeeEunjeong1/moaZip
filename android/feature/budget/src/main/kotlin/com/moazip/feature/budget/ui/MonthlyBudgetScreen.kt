@@ -10,16 +10,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.moazip.core.ui.component.MoaZipButton
 import com.moazip.core.ui.theme.MoaZipPalette
-import com.moazip.core.ui.theme.MoaZipTheme
-import com.moazip.feature.budget.contract.BudgetAllocationUiModel
-import com.moazip.feature.budget.contract.MemberBudgetUiModel
 import com.moazip.feature.budget.contract.MonthlyBudgetState
+import com.moazip.feature.budget.contract.MemberBudgetUiModel
+import com.moazip.feature.budget.R
+import com.moazip.feature.budget.contract.BudgetError
 import com.moazip.feature.budget.ui.component.BudgetSummaryCard
 import com.moazip.feature.budget.ui.component.JointSavingCard
 import com.moazip.feature.budget.ui.component.MemberBudgetCard
@@ -36,45 +36,26 @@ fun MonthlyBudgetScreen(
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         item {
-            Text("월급 관리", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.budget_title), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
             Text(
-                "${state.monthLabel} 월급을 어떻게 나눌지 확인해요.",
+                stringResource(R.string.budget_description, formatBudgetMonth(state.monthId)),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MoaZipPalette.Gray500,
             )
         }
         item { BudgetSummaryCard(state) }
-        state.errorMessage?.let { message ->
-            item { Text(message, color = MaterialTheme.colorScheme.error) }
+        state.error?.let { error ->
+            item { Text(stringResource(error.stringRes()), color = MaterialTheme.colorScheme.error) }
         }
         items(state.members, key = MemberBudgetUiModel::name) { MemberBudgetCard(it) }
-        item { JointSavingCard(state.jointSavings) }
-        item { MoaZipButton(text = "계획 수정하기", onClick = onEditClick) }
+        if (state.jointAllocations.isNotEmpty()) item { JointSavingCard(stringResource(R.string.budget_joint_budget), state.jointAllocations) }
+        if (state.jointSavings.isNotEmpty()) item { JointSavingCard(stringResource(R.string.budget_joint_saving), state.jointSavings) }
+        item { MoaZipButton(text = stringResource(R.string.budget_edit_plan), onClick = onEditClick) }
     }
 }
 
-@Preview(showBackground = true, widthDp = 393, heightDp = 850)
-@Composable
-private fun MonthlyBudgetScreenPreview() {
-    MoaZipTheme {
-        MonthlyBudgetScreen(
-            MonthlyBudgetState(
-                monthLabel = "2026년 9월",
-                members = listOf(
-                    MemberBudgetUiModel(
-                        "재웅",
-                        3_500_000,
-                        listOf(BudgetAllocationUiModel("생활비 · 용돈", 600_000), BudgetAllocationUiModel("ISA", 300_000)),
-                    ),
-                    MemberBudgetUiModel(
-                        "은정",
-                        4_000_000,
-                        listOf(BudgetAllocationUiModel("월세 · 관리비", 800_000), BudgetAllocationUiModel("해외주식", 1_000_000)),
-                    ),
-                ),
-                jointSavings = listOf(BudgetAllocationUiModel("경조사비", 200_000)),
-            ),
-            onEditClick = {},
-        )
-    }
+private fun BudgetError.stringRes() = when (this) {
+    BudgetError.UNAUTHENTICATED -> R.string.budget_error_unauthenticated
+    BudgetError.LOAD_FAILED -> R.string.budget_error_load_failed
+    BudgetError.SAVE_FAILED -> R.string.budget_error_save_failed
 }

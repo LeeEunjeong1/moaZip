@@ -36,9 +36,11 @@ class FirebaseBudgetRepository(private val firestore: FirebaseFirestore) : Budge
                     mapOf(
                         "name" to member.name,
                         "income" to member.income,
-                        "allocations" to member.allocations.map { it.toMap() },
+                        "budgetAllocations" to member.budgetAllocations.map { it.toMap() },
+                        "savings" to member.savings.map { it.toMap() },
                     )
                 },
+                "jointAllocations" to plan.jointAllocations.map { it.toMap() },
                 "jointSavings" to plan.jointSavings.map { it.toMap() },
                 "updatedBy" to userId,
                 "updatedAt" to FieldValue.serverTimestamp(),
@@ -60,13 +62,21 @@ class FirebaseBudgetRepository(private val firestore: FirebaseFirestore) : Budge
         monthId = getString("monthId") ?: fallbackMonthId,
         members = (get("members") as? List<*>)?.mapNotNull { raw ->
             val map = raw as? Map<*, *> ?: return@mapNotNull null
+            val legacyAllocations = (map["allocations"] as? List<*>)?.toAllocations().orEmpty()
             MemberBudget(
                 name = map["name"] as? String ?: return@mapNotNull null,
                 income = (map["income"] as? Number)?.toLong() ?: 0L,
-                allocations = (map["allocations"] as? List<*>)?.toAllocations().orEmpty(),
+                budgetAllocations = (map["budgetAllocations"] as? List<*>)?.toAllocations()
+                    ?: legacyAllocations.filterNot { it.isSavingItem() },
+                savings = (map["savings"] as? List<*>)?.toAllocations()
+                    ?: legacyAllocations.filter { it.isSavingItem() },
             )
         }.orEmpty(),
-        jointSavings = (get("jointSavings") as? List<*>)?.toAllocations().orEmpty(),
+        jointAllocations = (get("jointAllocations") as? List<*>)?.toAllocations()
+            ?: (get("jointSavings") as? List<*>)?.toAllocations().orEmpty(),
+        jointSavings = if (contains("jointAllocations")) {
+            (get("jointSavings") as? List<*>)?.toAllocations().orEmpty()
+        } else emptyList(),
     )
 
     private fun List<*>.toAllocations() = mapNotNull { raw ->
@@ -75,4 +85,9 @@ class FirebaseBudgetRepository(private val firestore: FirebaseFirestore) : Budge
     }
 
     private fun BudgetAllocation.toMap() = mapOf("name" to name.trim(), "amount" to amount)
+
+    private fun BudgetAllocation.isSavingItem(): Boolean {
+        val keywords = listOf("ISA", "주식", "적금", "예금", "저축", "연금", "청약")
+        return keywords.any { name.contains(it, ignoreCase = true) }
+    }
 }

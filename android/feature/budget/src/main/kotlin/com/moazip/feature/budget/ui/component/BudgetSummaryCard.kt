@@ -7,12 +7,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.moazip.core.ui.component.MoaZipCard
 import com.moazip.core.ui.theme.MoaZipPalette
 import com.moazip.feature.budget.contract.MonthlyBudgetState
+import com.moazip.feature.budget.R
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -20,7 +22,7 @@ import java.util.Locale
 internal fun BudgetSummaryCard(state: MonthlyBudgetState) {
     MoaZipCard {
         Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
-            Text("이번 달 예상 저축", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.budget_total_saving), style = MaterialTheme.typography.titleMedium)
             Text(
                 text = state.availableSaving.toWon(),
                 style = MaterialTheme.typography.headlineLarge,
@@ -28,14 +30,19 @@ internal fun BudgetSummaryCard(state: MonthlyBudgetState) {
                 color = if (state.availableSaving >= 0) MoaZipPalette.Green600 else MaterialTheme.colorScheme.error,
             )
             Text(
-                text = "월급의 ${String.format(Locale.KOREA, "%.1f", state.savingRate)}%를 더 모을 수 있어요",
+                text = stringResource(R.string.budget_saving_breakdown, state.plannedSaving.toWon(), state.remainingSaving.toWon()),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MoaZipPalette.Gray500,
             )
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                SummaryValue("총수입", state.totalIncome)
-                SummaryValue("계획 배분", state.totalAllocation)
+                SummaryValue(stringResource(R.string.budget_total_income), state.totalIncome)
+                SummaryValue(stringResource(R.string.budget_spending_budget), state.totalAllocation)
             }
+            Text(
+                text = stringResource(R.string.budget_saving_rate, String.format(Locale.KOREA, "%.1f", state.savingRate)),
+                style = MaterialTheme.typography.bodySmall,
+                color = MoaZipPalette.Gray500,
+            )
         }
     }
 }

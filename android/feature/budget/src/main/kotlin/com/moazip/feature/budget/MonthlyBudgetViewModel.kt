@@ -7,6 +7,7 @@ import com.moazip.core.presentation.mvi.MviViewModel
 import com.moazip.feature.budget.contract.MonthlyBudgetEffect
 import com.moazip.feature.budget.contract.MonthlyBudgetIntent
 import com.moazip.feature.budget.contract.MonthlyBudgetState
+import com.moazip.feature.budget.contract.BudgetError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.YearMonth
 import javax.inject.Inject
@@ -21,11 +22,11 @@ class MonthlyBudgetViewModel @Inject constructor(
 ) : MviViewModel<MonthlyBudgetIntent, MonthlyBudgetState, MonthlyBudgetEffect>(defaultBudgetState()) {
     init {
         val userId = currentUserProvider.userId
-        if (userId == null) reduce { copy(errorMessage = "로그인 정보를 확인할 수 없어요.") }
+        if (userId == null) reduce { copy(error = BudgetError.UNAUTHENTICATED) }
         else viewModelScope.launch {
             budgetRepository.observeMonthlyBudget(userId, YearMonth.now().toString())
-                .onStart { reduce { copy(isLoading = true, errorMessage = null) } }
-                .catch { reduce { copy(isLoading = false, errorMessage = "예산을 불러오지 못했어요.") } }
+                .onStart { reduce { copy(isLoading = true, error = null) } }
+                .catch { reduce { copy(isLoading = false, error = BudgetError.LOAD_FAILED) } }
                 .collect { plan -> reduce { (plan?.toUiState() ?: defaultBudgetState()).copy(isLoading = false) } }
         }
     }
