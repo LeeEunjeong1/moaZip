@@ -11,8 +11,9 @@ import com.moazip.feature.budget.ui.MonthlyBudgetScreen
 fun MonthlyBudgetRoute(
     viewModel: MonthlyBudgetViewModel,
     onEditClick: () -> Unit,
+    onHistoryClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val state by viewModel.state.collectAsState()
-    MonthlyBudgetScreen(state = state, onEditClick = onEditClick, modifier = modifier)
+    MonthlyBudgetScreen(state = state, onEditClick = onEditClick, onHistoryClick = onHistoryClick, modifier = modifier)
 }

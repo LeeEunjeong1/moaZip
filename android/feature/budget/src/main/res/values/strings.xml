@@ -3,6 +3,8 @@
     <string name="budget_description">%1$s 월급을 어떻게 나눌지 확인해요.</string>
     <string name="budget_month_format">%1$d년 %2$d월</string>
     <string name="budget_edit_plan">계획 수정하기</string>
+    <string name="budget_copied_from_previous">지난달 예산을 이번 달 초깃값으로 가져왔어요. 확인 후 저장해 주세요.</string>
+    <string name="budget_view_history">지난 예산 보기</string>
     <string name="budget_joint_budget">공동 예산</string>
     <string name="budget_joint_saving">공동 저축</string>
     <string name="budget_salary">월급</string>
@@ -43,4 +45,11 @@
     <string name="budget_error_unauthenticated">로그인 정보를 확인할 수 없어요.</string>
     <string name="budget_error_load_failed">예산을 불러오지 못했어요.</string>
     <string name="budget_error_save_failed">예산을 저장하지 못했어요.</string>
+    <string name="budget_history_title">지난 예산</string>
+    <string name="budget_history_description">월별 월급 관리 계획을 모아봐요.</string>
+    <string name="budget_history_empty">아직 저장된 예산이 없어요.</string>
+    <string name="budget_history_income">총수입 %1$s</string>
+    <string name="budget_history_spending">소비 예산</string>
+    <string name="budget_history_planned_saving">계획 저축</string>
+    <string name="budget_history_remaining">남은 돈</string>
 </resources>

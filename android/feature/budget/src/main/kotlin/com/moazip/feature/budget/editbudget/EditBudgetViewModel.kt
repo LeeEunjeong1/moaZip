@@ -71,8 +71,17 @@ class EditBudgetViewModel @Inject constructor(
     private fun load() {
         val userId = currentUserProvider.userId ?: return reduce { copy(isLoading = false, error = BudgetError.UNAUTHENTICATED) }
         viewModelScope.launch {
-            runCatching { budgetRepository.observeMonthlyBudget(userId, YearMonth.now().toString()).first() }
-                .onSuccess { plan -> reduce { (plan?.toUiState() ?: defaultBudgetState()).copy(isLoading = false) } }
+            val currentMonthId = YearMonth.now().toString()
+            val previousMonthId = YearMonth.now().minusMonths(1).toString()
+            runCatching {
+                budgetRepository.observeMonthlyBudget(userId, currentMonthId).first()
+                    ?.toUiState()
+                    ?: budgetRepository.observeBudgetHistory(userId).first()
+                        .firstOrNull { it.monthId == previousMonthId }
+                        ?.toUiState(currentMonthId, isCopiedFromPreviousMonth = true)
+                    ?: defaultBudgetState()
+            }
+                .onSuccess { loadedState -> reduce { loadedState.copy(isLoading = false) } }
                 .onFailure { reduce { copy(isLoading = false, error = BudgetError.LOAD_FAILED) } }
         }
     }

@@ -8,9 +8,12 @@ import com.moazip.feature.budget.contract.MemberBudgetUiModel
 import com.moazip.feature.budget.contract.MonthlyBudgetState
 import java.time.YearMonth
 
-internal fun MonthlyBudgetPlan.toUiState() = MonthlyBudgetState(
-    monthId = monthId,
-    monthLabel = monthId,
+internal fun MonthlyBudgetPlan.toUiState(
+    targetMonthId: String = monthId,
+    isCopiedFromPreviousMonth: Boolean = false,
+) = MonthlyBudgetState(
+    monthId = targetMonthId,
+    monthLabel = targetMonthId,
     members = members.map { member ->
         MemberBudgetUiModel(
             member.name,
@@ -21,6 +24,7 @@ internal fun MonthlyBudgetPlan.toUiState() = MonthlyBudgetState(
     },
     jointAllocations = jointAllocations.map { BudgetAllocationUiModel(it.name, it.amount) },
     jointSavings = jointSavings.map { BudgetAllocationUiModel(it.name, it.amount) },
+    isCopiedFromPreviousMonth = isCopiedFromPreviousMonth,
 )
 
 internal fun MonthlyBudgetState.toModel() = MonthlyBudgetPlan(

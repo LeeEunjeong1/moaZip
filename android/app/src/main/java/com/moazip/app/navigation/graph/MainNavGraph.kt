@@ -31,6 +31,8 @@ import com.moazip.feature.budget.route.MonthlyBudgetRoute
 import com.moazip.feature.budget.MonthlyBudgetViewModel
 import com.moazip.feature.budget.editbudget.EditBudgetViewModel
 import com.moazip.feature.budget.editbudget.contract.EditBudgetEffect
+import com.moazip.feature.budget.history.BudgetHistoryViewModel
+import com.moazip.feature.budget.history.route.BudgetHistoryRoute
 import com.moazip.feature.budget.editbudget.route.EditBudgetRoute
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -145,6 +147,7 @@ internal fun NavGraphBuilder.mainGraph(navController: NavHostController) {
         MonthlyBudgetRoute(
             viewModel = viewModel,
             onEditClick = { navController.navigate(AppRoute.EditMonthlyBudget) },
+            onHistoryClick = { navController.navigate(AppRoute.BudgetHistory) },
             modifier = Modifier.safeDrawingPadding(),
         )
     }
@@ -161,6 +164,14 @@ internal fun NavGraphBuilder.mainGraph(navController: NavHostController) {
         }
         EditBudgetRoute(
             viewModel = viewModel,
+            modifier = Modifier.safeDrawingPadding(),
+        )
+    }
+    composable(AppRoute.BudgetHistory) {
+        val viewModel: BudgetHistoryViewModel = hiltViewModel()
+        BudgetHistoryRoute(
+            viewModel = viewModel,
+            onBack = { navController.popBackStack() },
             modifier = Modifier.safeDrawingPadding(),
         )
     }

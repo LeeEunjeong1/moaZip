@@ -13,6 +13,7 @@ import java.time.YearMonth
 import javax.inject.Inject
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -24,10 +25,18 @@ class MonthlyBudgetViewModel @Inject constructor(
         val userId = currentUserProvider.userId
         if (userId == null) reduce { copy(error = BudgetError.UNAUTHENTICATED) }
         else viewModelScope.launch {
-            budgetRepository.observeMonthlyBudget(userId, YearMonth.now().toString())
+            val currentMonthId = YearMonth.now().toString()
+            val previousMonthId = YearMonth.now().minusMonths(1).toString()
+            budgetRepository.observeMonthlyBudget(userId, currentMonthId)
                 .onStart { reduce { copy(isLoading = true, error = null) } }
                 .catch { reduce { copy(isLoading = false, error = BudgetError.LOAD_FAILED) } }
-                .collect { plan -> reduce { (plan?.toUiState() ?: defaultBudgetState()).copy(isLoading = false) } }
+                .collect { plan ->
+                    val state = plan?.toUiState() ?: budgetRepository.observeBudgetHistory(userId).first()
+                        .firstOrNull { it.monthId == previousMonthId }
+                        ?.toUiState(currentMonthId, isCopiedFromPreviousMonth = true)
+                        ?: defaultBudgetState()
+                    reduce { state.copy(isLoading = false) }
+                }
         }
     }
 

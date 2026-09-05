@@ -10,6 +10,7 @@ data class MonthlyBudgetState(
     val jointSavings: List<BudgetAllocationUiModel> = emptyList(),
     val isLoading: Boolean = false,
     val isSaving: Boolean = false,
+    val isCopiedFromPreviousMonth: Boolean = false,
     val error: BudgetError? = null,
 ) : UiState {
     val totalIncome: Long get() = members.sumOf(MemberBudgetUiModel::income)

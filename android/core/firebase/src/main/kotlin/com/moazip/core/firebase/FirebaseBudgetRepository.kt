@@ -26,6 +26,20 @@ class FirebaseBudgetRepository(private val firestore: FirebaseFirestore) : Budge
         })
     }
 
+    override fun observeBudgetHistory(userId: String): Flow<List<MonthlyBudgetPlan>> = flow {
+        val householdId = findHouseholdId(userId)
+            ?: throw IllegalStateException("User does not belong to a household.")
+        emitAll(callbackFlow {
+            val registration = firestore.collection("households").document(householdId)
+                .collection("budgetPlans")
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) close(error)
+                    else trySend(snapshot?.documents.orEmpty().map { it.toPlan(it.id) }.sortedByDescending { it.monthId })
+                }
+            awaitClose(registration::remove)
+        })
+    }
+
     override suspend fun saveMonthlyBudget(userId: String, plan: MonthlyBudgetPlan) {
         val householdId = findHouseholdId(userId)
             ?: throw IllegalStateException("User does not belong to a household.")

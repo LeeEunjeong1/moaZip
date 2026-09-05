@@ -66,6 +66,15 @@ fun EditBudgetScreen(
             state.error?.let { error ->
                 item { Text(stringResource(error.stringRes()), color = MaterialTheme.colorScheme.error) }
             }
+            if (state.isCopiedFromPreviousMonth) {
+                item {
+                    Text(
+                        stringResource(R.string.budget_copied_from_previous),
+                        color = MoaZipPalette.Gray500,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+            }
             itemsIndexed(state.members, key = { _, member -> member.name }) { memberIndex, member ->
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Text(stringResource(R.string.budget_member_title, member.name), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)

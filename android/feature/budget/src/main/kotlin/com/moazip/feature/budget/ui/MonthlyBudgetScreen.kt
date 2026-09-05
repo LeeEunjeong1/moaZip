@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.moazip.core.ui.component.MoaZipButton
+import com.moazip.core.ui.component.MoaZipOutlinedButton
 import com.moazip.core.ui.theme.MoaZipPalette
 import com.moazip.feature.budget.contract.MonthlyBudgetState
 import com.moazip.feature.budget.contract.MemberBudgetUiModel
@@ -28,6 +29,7 @@ import com.moazip.feature.budget.ui.component.MemberBudgetCard
 fun MonthlyBudgetScreen(
     state: MonthlyBudgetState,
     onEditClick: () -> Unit,
+    onHistoryClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -44,6 +46,15 @@ fun MonthlyBudgetScreen(
             )
         }
         item { BudgetSummaryCard(state) }
+        if (state.isCopiedFromPreviousMonth) {
+            item {
+                Text(
+                    text = stringResource(R.string.budget_copied_from_previous),
+                    color = MoaZipPalette.Gray500,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+        }
         state.error?.let { error ->
             item { Text(stringResource(error.stringRes()), color = MaterialTheme.colorScheme.error) }
         }
@@ -51,6 +62,7 @@ fun MonthlyBudgetScreen(
         if (state.jointAllocations.isNotEmpty()) item { JointSavingCard(stringResource(R.string.budget_joint_budget), state.jointAllocations) }
         if (state.jointSavings.isNotEmpty()) item { JointSavingCard(stringResource(R.string.budget_joint_saving), state.jointSavings) }
         item { MoaZipButton(text = stringResource(R.string.budget_edit_plan), onClick = onEditClick) }
+        item { MoaZipOutlinedButton(text = stringResource(R.string.budget_view_history), onClick = onHistoryClick) }
     }
 }
 
