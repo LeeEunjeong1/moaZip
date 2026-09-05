@@ -25,7 +25,11 @@ import com.moazip.feature.budget.ui.component.JointSavingCard
 import com.moazip.feature.budget.ui.component.MemberBudgetCard
 
 @Composable
-fun MonthlyBudgetScreen(state: MonthlyBudgetState, modifier: Modifier = Modifier) {
+fun MonthlyBudgetScreen(
+    state: MonthlyBudgetState,
+    onEditClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     LazyColumn(
         modifier = modifier.fillMaxSize().background(MoaZipPalette.Cream50).padding(horizontal = 24.dp),
         contentPadding = PaddingValues(top = 20.dp, bottom = 28.dp),
@@ -42,7 +46,7 @@ fun MonthlyBudgetScreen(state: MonthlyBudgetState, modifier: Modifier = Modifier
         item { BudgetSummaryCard(state) }
         items(state.members, key = MemberBudgetUiModel::name) { MemberBudgetCard(it) }
         item { JointSavingCard(state.jointSavings) }
-        item { MoaZipButton(text = "계획 수정하기", onClick = {}) }
+        item { MoaZipButton(text = "계획 수정하기", onClick = onEditClick) }
     }
 }
 
@@ -67,6 +71,7 @@ private fun MonthlyBudgetScreenPreview() {
                 ),
                 jointSavings = listOf(BudgetAllocationUiModel("경조사비", 200_000)),
             ),
+            onEditClick = {},
         )
     }
 }

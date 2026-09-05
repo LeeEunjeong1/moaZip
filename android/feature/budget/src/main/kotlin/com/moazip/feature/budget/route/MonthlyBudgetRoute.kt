@@ -8,7 +8,10 @@ import com.moazip.feature.budget.contract.MonthlyBudgetState
 import com.moazip.feature.budget.ui.MonthlyBudgetScreen
 
 @Composable
-fun MonthlyBudgetRoute(modifier: Modifier = Modifier) {
+fun MonthlyBudgetRoute(
+    onEditClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     MonthlyBudgetScreen(
         state = MonthlyBudgetState(
             monthLabel = "2026년 9월",
@@ -39,6 +42,7 @@ fun MonthlyBudgetRoute(modifier: Modifier = Modifier) {
                 BudgetAllocationUiModel("비정기 지출 적립", 300_000),
             ),
         ),
+        onEditClick = onEditClick,
         modifier = modifier,
     )
 }
