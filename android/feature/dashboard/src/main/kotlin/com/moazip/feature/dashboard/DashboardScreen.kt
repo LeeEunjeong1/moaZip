@@ -64,6 +64,10 @@ fun DashboardScreen(
         Text("우리 집 자산", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
         LatestAssetRecordCard(snapshot = state.latestSnapshot)
         AssetTrendCard(points = state.assetTrend)
+        MoaZipButton(
+            text = "이번 달 월급 계획 보기",
+            onClick = { onIntent(DashboardIntent.OpenMonthlyBudget) },
+        )
     }
 }
 

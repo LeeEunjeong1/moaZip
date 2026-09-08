@@ -49,7 +49,7 @@ dependencies {
     implementation(project(":feature:assets"))
     implementation(project(":feature:records"))
     implementation(project(":feature:settings"))
-    implementation(project(":feature:recurring"))
+    implementation(project(":feature:budget"))
     implementation(project(":feature:import"))
 
     implementation(libs.androidx.core.ktx)

@@ -27,6 +27,13 @@ import com.moazip.feature.dashboard.DashboardViewModel
 import com.moazip.feature.dashboard.contract.DashboardEffect
 import com.moazip.feature.records.route.AssetRecordsRoute
 import com.moazip.feature.settings.route.SettingsRoute
+import com.moazip.feature.budget.route.MonthlyBudgetRoute
+import com.moazip.feature.budget.MonthlyBudgetViewModel
+import com.moazip.feature.budget.editbudget.EditBudgetViewModel
+import com.moazip.feature.budget.editbudget.contract.EditBudgetEffect
+import com.moazip.feature.budget.history.BudgetHistoryViewModel
+import com.moazip.feature.budget.history.route.BudgetHistoryRoute
+import com.moazip.feature.budget.editbudget.route.EditBudgetRoute
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -43,6 +50,9 @@ internal fun NavGraphBuilder.mainGraph(navController: NavHostController) {
                         }
                         DashboardEffect.NavigateToRecords -> {
                             navController.navigateToMainTab(MainTab.Records)
+                        }
+                        DashboardEffect.NavigateToMonthlyBudget -> {
+                            navController.navigate(AppRoute.MonthlyBudget)
                         }
                         is DashboardEffect.ShowMessage -> Unit
                     }
@@ -131,5 +141,38 @@ internal fun NavGraphBuilder.mainGraph(navController: NavHostController) {
                 modifier = Modifier.padding(innerPadding),
             )
         }
+    }
+    composable(AppRoute.MonthlyBudget) {
+        val viewModel: MonthlyBudgetViewModel = hiltViewModel()
+        MonthlyBudgetRoute(
+            viewModel = viewModel,
+            onEditClick = { navController.navigate(AppRoute.EditMonthlyBudget) },
+            onHistoryClick = { navController.navigate(AppRoute.BudgetHistory) },
+            modifier = Modifier.safeDrawingPadding(),
+        )
+    }
+    composable(AppRoute.EditMonthlyBudget) {
+        val viewModel: EditBudgetViewModel = hiltViewModel()
+        LaunchedEffect(viewModel) {
+            viewModel.effect.onEach { effect ->
+                when (effect) {
+                    EditBudgetEffect.Saved,
+                    EditBudgetEffect.NavigateBack,
+                    -> navController.popBackStack()
+                }
+            }.launchIn(this)
+        }
+        EditBudgetRoute(
+            viewModel = viewModel,
+            modifier = Modifier.safeDrawingPadding(),
+        )
+    }
+    composable(AppRoute.BudgetHistory) {
+        val viewModel: BudgetHistoryViewModel = hiltViewModel()
+        BudgetHistoryRoute(
+            viewModel = viewModel,
+            onBack = { navController.popBackStack() },
+            modifier = Modifier.safeDrawingPadding(),
+        )
     }
 }

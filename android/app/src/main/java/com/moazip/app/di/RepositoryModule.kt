@@ -8,12 +8,14 @@ import com.moazip.core.domain.repository.AssetSnapshotRepository
 import com.moazip.core.domain.repository.AuthRepository
 import com.moazip.core.domain.repository.HouseholdRepository
 import com.moazip.core.domain.repository.UserRepository
+import com.moazip.core.domain.repository.BudgetRepository
 import com.moazip.core.firebase.FirebaseAssetRepository
 import com.moazip.core.firebase.FirebaseAssetSnapshotRepository
 import com.moazip.core.firebase.FirebaseAuthRepository
 import com.moazip.core.firebase.FirebaseCurrentUserProvider
 import com.moazip.core.firebase.FirebaseHouseholdRepository
 import com.moazip.core.firebase.FirebaseUserRepository
+import com.moazip.core.firebase.FirebaseBudgetRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -54,4 +56,9 @@ object RepositoryModule {
     @Singleton
     fun provideAssetSnapshotRepository(firestore: FirebaseFirestore): AssetSnapshotRepository =
         FirebaseAssetSnapshotRepository(firestore)
+
+    @Provides
+    @Singleton
+    fun provideBudgetRepository(firestore: FirebaseFirestore): BudgetRepository =
+        FirebaseBudgetRepository(firestore)
 }

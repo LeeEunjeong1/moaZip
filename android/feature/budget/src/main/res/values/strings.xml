@@ -1,0 +1,55 @@
+<resources>
+    <string name="budget_title">월급 관리</string>
+    <string name="budget_description">%1$s 월급을 어떻게 나눌지 확인해요.</string>
+    <string name="budget_month_format">%1$d년 %2$d월</string>
+    <string name="budget_edit_plan">계획 수정하기</string>
+    <string name="budget_copied_from_previous">지난달 예산을 이번 달 초깃값으로 가져왔어요. 확인 후 저장해 주세요.</string>
+    <string name="budget_view_history">지난 예산 보기</string>
+    <string name="budget_joint_budget">공동 예산</string>
+    <string name="budget_joint_saving">공동 저축</string>
+    <string name="budget_salary">월급</string>
+    <string name="budget_allocation_title">예산 배분</string>
+    <string name="budget_allocation_description">이번 달 사용할 돈</string>
+    <string name="budget_saving_plan_title">저축 계획</string>
+    <string name="budget_saving_plan_description">이번 달 저축할 돈</string>
+    <string name="budget_remaining_saving">남은 돈 · 추가 저축</string>
+    <string name="budget_empty_items">등록된 항목이 없어요</string>
+    <string name="budget_total_saving">이번 달 총 저축</string>
+    <string name="budget_saving_breakdown">계획 저축 %1$s + 남은 돈 %2$s</string>
+    <string name="budget_total_income">총수입</string>
+    <string name="budget_spending_budget">소비 예산</string>
+    <string name="budget_saving_rate">월급의 %1$s%%를 모을 수 있어요</string>
+
+    <string name="budget_edit_back">‹  돌아가기</string>
+    <string name="budget_edit_title">예산 계획 수정</string>
+    <string name="budget_edit_description">%1$s 배분 금액을 수정해요.</string>
+    <string name="budget_expected_saving">예상 저축 가능액</string>
+    <string name="budget_edit_summary">예산 %1$s · 계획 저축 %2$s</string>
+    <string name="budget_remaining_money">남은 돈 %1$s</string>
+    <string name="budget_member_title">%1$s 예산</string>
+    <string name="budget_allocation_edit_description">이번 달 생활에 사용할 금액</string>
+    <string name="budget_joint_items">공동 항목</string>
+    <string name="budget_joint_budget_description">함께 사용할 금액</string>
+    <string name="budget_joint_saving_description">함께 모아둘 금액</string>
+    <string name="budget_cancel">취소</string>
+    <string name="budget_save">저장하기</string>
+    <string name="budget_saving_in_progress">저장 중…</string>
+    <string name="budget_add_allocation">+ 예산 항목 추가</string>
+    <string name="budget_add_saving">+ 저축 항목 추가</string>
+    <string name="budget_item">항목</string>
+    <string name="budget_delete">삭제</string>
+    <string name="budget_item_placeholder">예: ISA</string>
+    <string name="budget_amount_placeholder">금액 입력</string>
+    <string name="budget_won_format">%1$s원</string>
+
+    <string name="budget_error_unauthenticated">로그인 정보를 확인할 수 없어요.</string>
+    <string name="budget_error_load_failed">예산을 불러오지 못했어요.</string>
+    <string name="budget_error_save_failed">예산을 저장하지 못했어요.</string>
+    <string name="budget_history_title">지난 예산</string>
+    <string name="budget_history_description">월별 월급 관리 계획을 모아봐요.</string>
+    <string name="budget_history_empty">아직 저장된 예산이 없어요.</string>
+    <string name="budget_history_income">총수입 %1$s</string>
+    <string name="budget_history_spending">소비 예산</string>
+    <string name="budget_history_planned_saving">계획 저축</string>
+    <string name="budget_history_remaining">남은 돈</string>
+</resources>

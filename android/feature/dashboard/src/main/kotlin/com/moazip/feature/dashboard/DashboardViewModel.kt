@@ -39,6 +39,7 @@ class DashboardViewModel @Inject constructor(
             }
             DashboardIntent.OpenAssets -> postEffect(DashboardEffect.NavigateToAssets)
             DashboardIntent.OpenRecords -> postEffect(DashboardEffect.NavigateToRecords)
+            DashboardIntent.OpenMonthlyBudget -> postEffect(DashboardEffect.NavigateToMonthlyBudget)
         }
     }
 

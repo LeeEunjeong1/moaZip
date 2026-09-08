@@ -61,6 +61,12 @@ service cloud.firestore {
           && exists(/databases/$(database)/documents/households/$(householdId)/members/$(request.auth.uid));
         allow delete: if false;
       }
+
+      match /budgetPlans/{monthId} {
+        allow read, create, update: if request.auth != null
+          && exists(/databases/$(database)/documents/households/$(householdId)/members/$(request.auth.uid));
+        allow delete: if false;
+      }
     }
 
     match /inviteCodes/{inviteCode} {
